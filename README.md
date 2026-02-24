@@ -21,19 +21,20 @@ Script provided as is. Use at own risk. No guarantees or warranty provided.
 linkedin: https://www.linkedin.com/in/thomasvrhydn/
 twitter:  @thomasvrhydn
 
-Features
-Defender AV
-Version Information — AM Engine, AM Product, AM Service, NIS Engine versions, AM Running Mode, Computer State
-Service Status — AM Service, Antivirus, Antispyware, NIS enabled states, Virtual Machine detection, Computer ID
-Real-Time Protection — RealTime Protection, OnAccess Protection, Behavior Monitor, IOAV Protection, Tamper Protection status and source
-Scan Information — Full and Quick scan age, start/end times
-Protection Settings — Cloud Block Level, Block at First Seen, Cloud Timeout, Quarantine purge days, File Hash Computation, Device Control state
-Additional Information — Signature Fallback Order, NIS Signature last updated, Last Quick Scan source
+Features  
 
-Attack Surface Reduction
-ASR Rules Status — View all 19 ASR rules with their current state (Enabled / Audit / Warning / Not Enabled), with filtering by status in a sortable DataGrid popup
-ASR Per-Rule Exclusions — View per-rule and global ASR exclusions read from the registry (HKLM:\...\Windows Defender Exploit Guard\ASR), with filtering by rule name
-Exploit Protection — Export and open the Exploit Protection XML configuration
+Defender AV  
+Version Information — AM Engine, AM Product, AM Service, NIS Engine versions, AM Running Mode, Computer State  
+Service Status — AM Service, Antivirus, Antispyware, NIS enabled states, Virtual Machine detection, Computer ID  
+Real-Time Protection — RealTime Protection, OnAccess Protection, Behavior Monitor, IOAV Protection, Tamper Protection status and source  
+Scan Information — Full and Quick scan age, start/end times  
+Protection Settings — Cloud Block Level, Block at First Seen, Cloud Timeout, Quarantine purge days, File Hash Computation, Device Control state  
+Additional Information — Signature Fallback Order, NIS Signature last updated, Last Quick Scan source   
+
+Attack Surface Reduction  
+ASR Rules Status — View all 19 ASR rules with their current state (Enabled / Audit / Warning / Not Enabled), with filtering by status in a sortable DataGrid popup  
+ASR Per-Rule Exclusions — View per-rule and global ASR exclusions read from the registry (HKLM:\...\Windows Defender Exploit Guard\ASR), with filtering by rule name  
+Exploit Protection — Export and open the Exploit Protection XML configuration  
 
 Exclusions
 Defender AV Exclusions — View all configured exclusions (Path, Extension, Process, IP Address) with search and type filtering in a popup DataGrid
