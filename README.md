@@ -21,7 +21,7 @@ Script provided as is. Use at own risk. No guarantees or warranty provided.
 linkedin: https://www.linkedin.com/in/thomasvrhydn/
 twitter:  @thomasvrhydn
 
-Features  
+# Features  
 
 Defender AV  
 Version Information — AM Engine, AM Product, AM Service, NIS Engine versions, AM Running Mode, Computer State  
