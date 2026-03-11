@@ -516,10 +516,10 @@ It offers a centralized view of the security configuration, log files, updates, 
                 </Grid>
                 
                 <!-- Panel 6: Firewall -->
-                <ScrollViewer Name="panelFirewall" VerticalScrollBarVisibility="Auto" Visibility="Collapsed">
+                <ScrollViewer Name="panelFirewall" VerticalScrollBarVisibility="Visible" Visibility="Collapsed">
                     <Grid Margin="10">
                         <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
-                        <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
+                        <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
                         
                         <Border Grid.Column="0" Grid.Row="0" Style="{StaticResource SectionBorder}">
                             <StackPanel>
@@ -580,6 +580,17 @@ It offers a centralized view of the security configuration, log files, updates, 
                                 <Label Content="Firewall Rules" FontSize="14" FontWeight="Bold" Foreground="#2D2D44" Margin="0,0,0,10"/>
                                 <TextBlock Text="View and filter Windows Firewall rules." TextWrapping="Wrap" Margin="0,0,0,15" FontFamily="Segoe UI" Foreground="#666"/>
                                 <Button Name="btnShowFirewallRules" Content="Show Firewall Rules" Style="{StaticResource ActionButton}" Width="180"/>
+                            </StackPanel>
+                        </Border>
+
+                        <Border Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="2" Style="{StaticResource SectionBorder}">
+                            <StackPanel>
+                                <Label Content="Firewall Logs" FontSize="14" FontWeight="Bold" Foreground="#2D2D44" Margin="0,0,0,10"/>
+                                <TextBlock Text="View the Windows Firewall log file (pfirewall.log). Logging must be enabled via Windows Firewall with Advanced Security settings." TextWrapping="Wrap" Margin="0,0,0,15" FontFamily="Segoe UI" Foreground="#666"/>
+                                <WrapPanel>
+                                    <Button Name="btnShowFirewallLogs" Content="Show Firewall Logs" Style="{StaticResource ActionButton}" Width="180"/>
+                                </WrapPanel>
+                                <TextBlock Text="Note: Log file location: C:\Windows\System32\LogFiles\Firewall\pfirewall.log" TextWrapping="Wrap" Margin="0,15,0,0" FontFamily="Segoe UI" Foreground="#888" FontStyle="Italic"/>
                             </StackPanel>
                         </Border>
                     </Grid>
@@ -1617,6 +1628,171 @@ Function Show-FirewallRulesWindow {
     $cmbProfile.Add_SelectionChanged($ApplyFWFilters)
     
     $fwWindow.ShowDialog() | Out-Null
+}
+
+Function Show-FirewallLogsWindow {
+    param(
+        [Parameter(Mandatory=$true)]$LogData
+    )
+
+    $fwLogXaml = @"
+<Window
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    Title="Windows Firewall Logs" Height="750" Width="1400" WindowStartupLocation="CenterScreen" Background="#F5F5F5" ResizeMode="CanResizeWithGrip" MinHeight="500" MinWidth="1200">
+
+    <Grid Margin="10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!-- Header -->
+        <Border Grid.Row="0" Background="#2D2D44" Padding="15,10" Margin="0,0,0,10" CornerRadius="5">
+            <StackPanel>
+                <TextBlock Text="Windows Firewall Logs" FontSize="18" FontWeight="Bold" Foreground="White" FontFamily="Segoe UI"/>
+                <TextBlock Name="txtFWLogCount" Text="Loading..." FontSize="12" Foreground="#CCE5FF" FontFamily="Segoe UI"/>
+            </StackPanel>
+        </Border>
+
+        <!-- Filter Section -->
+        <Border Grid.Row="1" Background="White" Padding="10" Margin="0,0,0,10" CornerRadius="5" BorderBrush="#CCC" BorderThickness="1">
+            <StackPanel Orientation="Horizontal">
+                <Label Content="Search IP:" FontWeight="Bold" VerticalAlignment="Center" FontFamily="Segoe UI"/>
+                <TextBox Name="txtFWLogSearch" Width="150" Margin="5,0" Padding="5" FontFamily="Segoe UI" VerticalContentAlignment="Center"/>
+                <Separator Margin="10,0"/>
+                <Label Content="Action:" FontWeight="Bold" VerticalAlignment="Center" FontFamily="Segoe UI"/>
+                <ComboBox Name="cmbFWLogAction" Width="100" Margin="5,0" Padding="5" FontFamily="Segoe UI" SelectedIndex="0">
+                    <ComboBoxItem Content="All"/>
+                    <ComboBoxItem Content="ALLOW"/>
+                    <ComboBoxItem Content="DROP"/>
+                </ComboBox>
+                <Separator Margin="10,0"/>
+                <Label Content="Protocol:" FontWeight="Bold" VerticalAlignment="Center" FontFamily="Segoe UI"/>
+                <ComboBox Name="cmbFWLogProtocol" Width="100" Margin="5,0" Padding="5" FontFamily="Segoe UI" SelectedIndex="0">
+                    <ComboBoxItem Content="All"/>
+                    <ComboBoxItem Content="TCP"/>
+                    <ComboBoxItem Content="UDP"/>
+                    <ComboBoxItem Content="ICMP"/>
+                </ComboBox>
+                <Separator Margin="10,0"/>
+                <Label Content="Direction:" FontWeight="Bold" VerticalAlignment="Center" FontFamily="Segoe UI"/>
+                <ComboBox Name="cmbFWLogDirection" Width="110" Margin="5,0" Padding="5" FontFamily="Segoe UI" SelectedIndex="0">
+                    <ComboBoxItem Content="All"/>
+                    <ComboBoxItem Content="RECEIVE"/>
+                    <ComboBoxItem Content="SEND"/>
+                </ComboBox>
+            </StackPanel>
+        </Border>
+
+        <!-- DataGrid -->
+        <DataGrid Grid.Row="2" Name="dgFWLogs" AutoGenerateColumns="False" IsReadOnly="True"
+                  CanUserSortColumns="True" CanUserReorderColumns="True" CanUserResizeColumns="True"
+                  GridLinesVisibility="Horizontal" AlternatingRowBackground="#F9F9F9"
+                  BorderBrush="#CCC" BorderThickness="1" FontFamily="Segoe UI">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Date/Time" Binding="{Binding DateTime}" Width="140">
+                    <DataGridTextColumn.ElementStyle>
+                        <Style TargetType="TextBlock"><Setter Property="Padding" Value="5"/></Style>
+                    </DataGridTextColumn.ElementStyle>
+                </DataGridTextColumn>
+                <DataGridTextColumn Header="Action" Binding="{Binding Action}" Width="70">
+                    <DataGridTextColumn.ElementStyle>
+                        <Style TargetType="TextBlock"><Setter Property="Padding" Value="5"/><Setter Property="FontWeight" Value="SemiBold"/></Style>
+                    </DataGridTextColumn.ElementStyle>
+                </DataGridTextColumn>
+                <DataGridTextColumn Header="Protocol" Binding="{Binding Protocol}" Width="75">
+                    <DataGridTextColumn.ElementStyle>
+                        <Style TargetType="TextBlock"><Setter Property="Padding" Value="5"/></Style>
+                    </DataGridTextColumn.ElementStyle>
+                </DataGridTextColumn>
+                <DataGridTextColumn Header="Src IP" Binding="{Binding SrcIP}" Width="130">
+                    <DataGridTextColumn.ElementStyle>
+                        <Style TargetType="TextBlock"><Setter Property="Padding" Value="5"/></Style>
+                    </DataGridTextColumn.ElementStyle>
+                </DataGridTextColumn>
+                <DataGridTextColumn Header="Dst IP" Binding="{Binding DstIP}" Width="130">
+                    <DataGridTextColumn.ElementStyle>
+                        <Style TargetType="TextBlock"><Setter Property="Padding" Value="5"/></Style>
+                    </DataGridTextColumn.ElementStyle>
+                </DataGridTextColumn>
+                <DataGridTextColumn Header="Src Port" Binding="{Binding SrcPort}" Width="80">
+                    <DataGridTextColumn.ElementStyle>
+                        <Style TargetType="TextBlock"><Setter Property="Padding" Value="5"/></Style>
+                    </DataGridTextColumn.ElementStyle>
+                </DataGridTextColumn>
+                <DataGridTextColumn Header="Dst Port" Binding="{Binding DstPort}" Width="80">
+                    <DataGridTextColumn.ElementStyle>
+                        <Style TargetType="TextBlock"><Setter Property="Padding" Value="5"/></Style>
+                    </DataGridTextColumn.ElementStyle>
+                </DataGridTextColumn>
+                <DataGridTextColumn Header="Direction" Binding="{Binding Path}" Width="85">
+                    <DataGridTextColumn.ElementStyle>
+                        <Style TargetType="TextBlock"><Setter Property="Padding" Value="5"/></Style>
+                    </DataGridTextColumn.ElementStyle>
+                </DataGridTextColumn>
+                <DataGridTextColumn Header="Size" Binding="{Binding Size}" Width="60">
+                    <DataGridTextColumn.ElementStyle>
+                        <Style TargetType="TextBlock"><Setter Property="Padding" Value="5"/></Style>
+                    </DataGridTextColumn.ElementStyle>
+                </DataGridTextColumn>
+                <DataGridTextColumn Header="Info" Binding="{Binding Info}" Width="*">
+                    <DataGridTextColumn.ElementStyle>
+                        <Style TargetType="TextBlock"><Setter Property="Padding" Value="5"/><Setter Property="TextTrimming" Value="CharacterEllipsis"/></Style>
+                    </DataGridTextColumn.ElementStyle>
+                </DataGridTextColumn>
+            </DataGrid.Columns>
+        </DataGrid>
+    </Grid>
+</Window>
+"@
+
+    $fwLogReader = (New-Object System.Xml.XmlNodeReader ([xml]$fwLogXaml))
+    $fwLogWindow = [Windows.Markup.XamlReader]::Load($fwLogReader)
+
+    $dgFWLogs          = $fwLogWindow.FindName("dgFWLogs")
+    $txtFWLogSearch    = $fwLogWindow.FindName("txtFWLogSearch")
+    $cmbFWLogAction    = $fwLogWindow.FindName("cmbFWLogAction")
+    $cmbFWLogProtocol  = $fwLogWindow.FindName("cmbFWLogProtocol")
+    $cmbFWLogDirection = $fwLogWindow.FindName("cmbFWLogDirection")
+    $txtFWLogCount     = $fwLogWindow.FindName("txtFWLogCount")
+
+    $script:OriginalFWLogData = $LogData
+
+    $dgFWLogs.ItemsSource = $LogData
+    $txtFWLogCount.Text = "Showing $($LogData.Count) log entries"
+
+    $ApplyFWLogFilters = {
+        $searchText   = $txtFWLogSearch.Text.ToLower()
+        $actionFilter = $cmbFWLogAction.SelectedItem.Content
+        $protoFilter  = $cmbFWLogProtocol.SelectedItem.Content
+        $dirFilter    = $cmbFWLogDirection.SelectedItem.Content
+
+        $filtered = $script:OriginalFWLogData | Where-Object {
+            $matchSearch = $true
+            $matchAction = $true
+            $matchProto  = $true
+            $matchDir    = $true
+
+            if ($searchText)              { $matchSearch = ($_.SrcIP -like "*$searchText*") -or ($_.DstIP -like "*$searchText*") }
+            if ($actionFilter -ne "All")  { $matchAction = $_.Action   -eq $actionFilter }
+            if ($protoFilter  -ne "All")  { $matchProto  = $_.Protocol -eq $protoFilter }
+            if ($dirFilter    -ne "All")  { $matchDir    = $_.Path     -eq $dirFilter }
+
+            $matchSearch -and $matchAction -and $matchProto -and $matchDir
+        }
+
+        $dgFWLogs.ItemsSource = $filtered
+        $txtFWLogCount.Text = "Showing $($filtered.Count) of $($script:OriginalFWLogData.Count) log entries"
+    }
+
+    $txtFWLogSearch.Add_TextChanged($ApplyFWLogFilters)
+    $cmbFWLogAction.Add_SelectionChanged($ApplyFWLogFilters)
+    $cmbFWLogProtocol.Add_SelectionChanged($ApplyFWLogFilters)
+    $cmbFWLogDirection.Add_SelectionChanged($ApplyFWLogFilters)
+
+    $fwLogWindow.ShowDialog() | Out-Null
 }
 
 Function Show-ASRWindow {
@@ -2664,6 +2840,61 @@ $btnShowFirewallRules.Add_Click({
     catch { 
         $MainWindow1.Cursor = [System.Windows.Input.Cursors]::Arrow
         [System.Windows.MessageBox]::Show($Error[0], 'Error', 'OK', 'Error') 
+    }
+})
+
+$btnShowFirewallLogs.Add_Click({
+    $MainWindow1.Cursor = [System.Windows.Input.Cursors]::Wait
+    try {
+        $logPath = "C:\Windows\System32\LogFiles\Firewall\pfirewall.log"
+
+        if (-not (Test-Path $logPath)) {
+            $MainWindow1.Cursor = [System.Windows.Input.Cursors]::Arrow
+            [System.Windows.MessageBox]::Show(
+                "Firewall log file not found at:`n$logPath`n`nTo enable firewall logging, open Windows Defender Firewall with Advanced Security > Properties > select a profile > Logging > Customize, then set 'Log dropped packets' and/or 'Log successful connections' to Yes.",
+                'Firewall Logging Not Enabled', 'OK', 'Warning')
+            return
+        }
+
+        # Read log file — skip comment lines starting with #
+        $rawLines = Get-Content -Path $logPath -ErrorAction Stop | Where-Object { $_ -notmatch '^#' -and $_.Trim() -ne '' }
+
+        if ($rawLines.Count -eq 0) {
+            $MainWindow1.Cursor = [System.Windows.Input.Cursors]::Arrow
+            [System.Windows.MessageBox]::Show("Firewall log file exists but contains no entries yet. Make sure logging is enabled and some traffic has occurred.", 'No Log Entries', 'OK', 'Information')
+            return
+        }
+
+        # Fields: date time action protocol src-ip dst-ip src-port dst-port size tcpflags tcpsyn tcpack tcpwin icmptype icmpcode info path
+        $logData = foreach ($line in $rawLines) {
+            $parts = $line -split ' '
+            if ($parts.Count -ge 16) {
+                [PSCustomObject]@{
+                    DateTime = "$($parts[0]) $($parts[1])"
+                    Action   = $parts[2]
+                    Protocol = $parts[3]
+                    SrcIP    = $parts[4]
+                    DstIP    = $parts[5]
+                    SrcPort  = $parts[6]
+                    DstPort  = $parts[7]
+                    Size     = $parts[8]
+                    Info     = $parts[15]
+                    Path     = if ($parts.Count -ge 17) { $parts[16] } else { "-" }
+                }
+            }
+        }
+
+        $MainWindow1.Cursor = [System.Windows.Input.Cursors]::Arrow
+
+        if ($logData) {
+            Show-FirewallLogsWindow -LogData $logData
+        } else {
+            [System.Windows.MessageBox]::Show("Could not parse any entries from the firewall log.", 'Parse Error', 'OK', 'Warning')
+        }
+    }
+    catch {
+        $MainWindow1.Cursor = [System.Windows.Input.Cursors]::Arrow
+        [System.Windows.MessageBox]::Show($Error[0], 'Error', 'OK', 'Error')
     }
 })
 
