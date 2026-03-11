@@ -1,6 +1,6 @@
 # Author: Thomas Verheyden
-# New release: 15.05.2025
-# Version: 2.1.0 - Left Side Menu Navigation UI
+# New release: 11.03.2026
+# Version: 3.1
 # Blogpost: https://vertho.tech/2023/06/30/tool-mde-troubleshooter-is-born/
 # Website: vertho.tech
 # Twitter: @thomasvrhydn
@@ -631,6 +631,21 @@ $btnMenuProxy.Add_Click({ Switch-Panel -PanelName "Proxy" })
 $btnMenuFirewall.Add_Click({ Switch-Panel -PanelName "Firewall" })
 # ==================== FUNCTIONS ====================
 
+Function Convert-BoolValue {
+    param([object]$Value)
+    $bool = $null
+    if ($Value -is [bool]) {
+        $bool = $Value
+    } elseif ($Value -eq $true -or $Value -eq "True" -or $Value -eq 1) {
+        $bool = $true
+    } elseif ($Value -eq $false -or $Value -eq "False" -or $Value -eq 0) {
+        $bool = $false
+    } else {
+        return $Value
+    }
+    return -not $bool
+}
+
 Function GetASRRuleStatus {
     try {    
         $ASRs = @()
@@ -1012,7 +1027,7 @@ Function WindowLoader {
         
         # Protection Settings (from Get-MpPreference)
         $lblQuarantine_text.Content = $MPpreference.QuarantinePurgeItemsAfterDelay
-        $lblPUAProtect_text.Content = $MPpreference.DisableBlockAtFirstSeen
+        $lblPUAProtect_text.Content = Convert-BoolValue -Value $MPpreference.DisableBlockAtFirstSeen
         $lblCloudTimeout_text.Content = $MPpreference.CloudExtendedTimeout
         $lblDeviceControl_Text.Content = $MPComputerstatus.DeviceControlState
         
