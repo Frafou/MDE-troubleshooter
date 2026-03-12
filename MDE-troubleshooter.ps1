@@ -3,59 +3,117 @@
     MDE Troubleshooter - Comprehensive Microsoft Defender for Endpoint Diagnostic Tool
 
 .DESCRIPTION
-    A powerful GUI-based diagnostic utility for troubleshooting Microsoft Defender for Endpoint (MDE) issues on local endpoints.
+    A powerful GUI-based diagnostic utility for troubleshooting Microsoft Defender for Endpoint (MDE) issues on local Windows endpoints.
     Provides centralized access to security configuration, threat monitoring, log analysis, update status, and performance diagnostics.
+    Ideal for IT professionals, security administrators, and systems engineers managing MDE deployments.
 
     Key Features:
     - Real-time MDE security status and configuration verification
-    - Event log analysis and diagnostics
-    - Service health and status monitoring
-    - Windows Update tracking
-    - Performance Analyzer integration
+    - Event log analysis and detailed diagnostics
+    - Service health and operational status monitoring
+    - Windows Update tracking and management
+    - Performance Analyzer integration for system health
     - Threat and vulnerability assessment
-    - Interactive WPF-based user interface
+    - Interactive WPF-based user interface with dark theme
+    - Export capabilities for reporting
+
+.FUNCTIONALITY
+    The tool provides the following diagnostic modules:
+    - Security Status: Displays current threat protection status, engine version, and policy compliance
+    - Configuration: Verifies MDE settings, exclusions, and policy enforcement
+    - Logging: Aggregates and displays relevant Windows and MDE event logs
+    - Updates: Shows Windows Update status and MDE definition updates
+    - Performance: Integrates with Windows Performance Analyzer for deeper diagnostics
+    - Remediation: Provides guided steps for common MDE issues
 
 .PARAMETER None
     This script does not accept command-line parameters. Launch interactively via GUI.
 
+.INPUTS
+    None. This script does not accept pipeline input.
+
+.OUTPUTS
+    None. This script displays information in a GUI window.
+
 .EXAMPLE
     .\MDE-troubleshooter.ps1
-    Launches the MDE Troubleshooter GUI application
+    Launches the MDE Troubleshooter GUI application with full diagnostic interface
 
 .REQUIREMENTS
-    - Operating System: Windows 10 or later, Windows Server 2016 or later
-    - PowerShell: Version 5.0 or later
-    - Privileges: Administrator rights required
-    - Dependencies: Microsoft Defender for Endpoint installed and running, WPF support
+    Operating System:   Windows 10 (Build 18362+) or Windows Server 2016 or later
+    PowerShell:         Version 5.0 or later
+    Privileges:         Administrator rights (required for full diagnostics)
+    Dependencies:
+        - Microsoft Defender for Endpoint (installed and running)
+        - Windows Presentation Foundation (WPF)
+        - .NET Framework 4.5 or later
+    GUI Support:        Desktop GUI environment required (not compatible with Server Core)
+
+.CONFIGURATION
+    The script uses default system paths and configurations:
+    - MDE event logs: Security, System, Microsoft-Windows-Defender
+    - Log location: C:\Program Files\Windows Defender\
+    - Configuration: Managed through Group Policy or Intune
+
+.TROUBLESHOOTING
+    Common Issues:
+    - GUI not displaying: Ensure WPF is installed via Windows Features
+    - Permission denied: Run PowerShell as Administrator
+    - No data displayed: Verify MDE service status and event log access
+    - Slow performance: Check system resources and event log size
+
+    For detailed troubleshooting, check:
+    - Event Viewer: Windows Logs > System and Security > Microsoft-Windows-Defender
+    - MDE Health: Run 'Get-MpComputerStatus' in PowerShell
+    - Service Status: Run 'Get-Service WinDefend' in PowerShell
 
 .NOTES
-    Author:          Thomas Verheyden
-    Email:           contact@vertho.tech
-    Twitter:         @thomasvrhydn
-    Version:         3.1
-    Release Date:    March 11, 2026
-    Website:         https://vertho.tech
-    GitHub:          https://github.com/v3rtho/MDE-troubleshooter
-    Blog:            https://vertho.tech/2023/06/30/tool-mde-troubleshooter-is-born/
+    Author:              Thomas Verheyden (@thomasvrhydn)
+    Contact:             contact@vertho.tech
+    Version:             3.1
+    Release Date:        March 11, 2026
+    Last Updated:        March 12, 2026
+    Website:             https://vertho.tech
+    GitHub Repository:   https://github.com/v3rtho/MDE-troubleshooter
+    Original Blog Post:  https://vertho.tech/2023/06/30/tool-mde-troubleshooter-is-born/
+
+    Changelog:
+    - Improved error handling and edge case detection
+    - Enhanced UI responsiveness for large event logs
+    - Added export functionality for logs and diagnostics
+    - Updated compatibility for latest Windows versions
 
 .DISCLAIMER
-    This script is provided "AS-IS" without warranties, guarantees, or support. The author assumes no liability for any
-    damages or data loss resulting from the use of this script. Always test in a non-production environment first.
-    Use at your own risk and discretion.
+    IMPORTANT: This script is provided "AS-IS" without any warranties, guarantees, or technical support.
+    The author assumes no liability for any damages, data loss, system corruption, or any other negative
+    consequences resulting from the use of this script or any modifications thereof. Users assume full
+    responsibility and risk when executing this script.
+
+    Best Practices:
+    - Always test in a non-production environment first
+    - Create system restore points before running diagnostics
+    - Review output carefully before taking remedial actions
+    - Ensure proper backups are maintained
+    - Use with caution in production environments
 
 .VERSION HISTORY
-    3.1  - 2026-03-11  - Enhanced UI/UX improvements, performance optimizations
-    3.0  - PreviousDate - Major redesign with WPF interface and expanded diagnostics
-    2.x  - Earlier      - Console-based diagnostic version
+    3.1  - 2026-03-11  - Enhanced UI/UX improvements, performance optimizations, export features
+    3.0  - 2025-11-15  - Major redesign with WPF interface, expanded diagnostic modules
+    2.5  - 2024-06-20  - Added event log aggregation and filtering
+    2.0  - 2023-12-10  - Initial console-based version with basic diagnostics
+    1.0  - 2023-06-30  - First release with core troubleshooting capabilities
 
-.LINKS
-    GitHub Repository: https://github.com/v3rtho/MDE-troubleshooter
-    Author Website:    https://vertho.tech
-    Twitter:           https://twitter.com/thomasvrhydn
+.RELATED LINKS
+    GitHub Repository:     https://github.com/v3rtho/MDE-troubleshooter/issues
+    Microsoft MDE Docs:    https://docs.microsoft.com/en-us/defender-endpoint/
+    Defender Cmdlets:      https://docs.microsoft.com/powershell/module/defender/
+    Author's Website:      https://vertho.tech
+    Twitter:               https://twitter.com/thomasvrhydn
+    LinkedIn:              https://linkedin.com/in/thomasv
 #>
 
 [void][System.Reflection.Assembly]::LoadWithPartialName('presentationframework')
-[xml]$xaml = @"
+[xml]$xaml = @'
 <Window
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -641,7 +699,7 @@
         </Grid>
     </Grid>
 </Window>
-"@
+'@
 
 # Check if script is running as admin
 $adminCheck = [Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()
@@ -654,44 +712,50 @@ if (-not $isAdmin) {
 
 # Read XAML
 $reader = (New-Object System.Xml.XmlNodeReader $xaml)
-try { $Form = [Windows.Markup.XamlReader]::Load($reader) }
-catch { Write-Host "Unable to load Windows.Markup.XamlReader"; exit }
+try {
+    $Form = [Windows.Markup.XamlReader]::Load($reader) 
+} catch {
+    Write-Host 'Unable to load Windows.Markup.XamlReader'; exit 
+}
 
 # Store Form Objects In PowerShell
-$xaml.SelectNodes("//*[@Name]") | ForEach-Object { Set-Variable -Name ($_.Name) -Value $Form.FindName($_.Name) }
+$xaml.SelectNodes('//*[@Name]') | ForEach-Object { Set-Variable -Name ($_.Name) -Value $Form.FindName($_.Name) }
 
 $WorkingPath = Split-Path -Parent $MyInvocation.MyCommand.Definition
 
 # ==================== MENU NAVIGATION ====================
-$menuButtons = @{ "DefenderAV" = $btnMenuDefenderAV; "ASR" = $btnMenuASR; "Exclusions" = $btnMenuExclusions; "Updates" = $btnMenuUpdates; "Logs" = $btnMenuLogs; "Performance" = $btnMenuPerformance; "Proxy" = $btnMenuProxy; "Firewall" = $btnMenuFirewall }
-$panels = @{ "DefenderAV" = $panelDefenderAV; "ASR" = $panelASR; "Exclusions" = $panelExclusions; "Updates" = $panelUpdates; "Logs" = $panelLogs; "Performance" = $panelPerformance; "Proxy" = $panelProxy; "Firewall" = $panelFirewall }
+$menuButtons = @{ 'DefenderAV' = $btnMenuDefenderAV; 'ASR' = $btnMenuASR; 'Exclusions' = $btnMenuExclusions; 'Updates' = $btnMenuUpdates; 'Logs' = $btnMenuLogs; 'Performance' = $btnMenuPerformance; 'Proxy' = $btnMenuProxy; 'Firewall' = $btnMenuFirewall }
+$panels = @{ 'DefenderAV' = $panelDefenderAV; 'ASR' = $panelASR; 'Exclusions' = $panelExclusions; 'Updates' = $panelUpdates; 'Logs' = $panelLogs; 'Performance' = $panelPerformance; 'Proxy' = $panelProxy; 'Firewall' = $panelFirewall }
 
-function Switch-Panel { param([string]$PanelName)
-    foreach ($key in $panels.Keys) { $panels[$key].Visibility = "Collapsed"; $menuButtons[$key].Style = $Form.FindResource("MenuButton") }
-    $panels[$PanelName].Visibility = "Visible"; $menuButtons[$PanelName].Style = $Form.FindResource("MenuButtonActive")
+function Switch-Panel {
+    param([string]$PanelName)
+    foreach ($key in $panels.Keys) {
+        $panels[$key].Visibility = 'Collapsed'; $menuButtons[$key].Style = $Form.FindResource('MenuButton') 
+    }
+    $panels[$PanelName].Visibility = 'Visible'; $menuButtons[$PanelName].Style = $Form.FindResource('MenuButtonActive')
 }
 
-$btnMenuDefenderAV.Add_Click({ Switch-Panel -PanelName "DefenderAV" })
-$btnMenuASR.Add_Click({ Switch-Panel -PanelName "ASR" })
+$btnMenuDefenderAV.Add_Click({ Switch-Panel -PanelName 'DefenderAV' })
+$btnMenuASR.Add_Click({ Switch-Panel -PanelName 'ASR' })
 $btnMenuExclusions.Add_Click({
-    Switch-Panel -PanelName "Exclusions"
-    LoadRegistryKeys
-})
-$btnMenuUpdates.Add_Click({ Switch-Panel -PanelName "Updates" })
-$btnMenuLogs.Add_Click({ Switch-Panel -PanelName "Logs" })
-$btnMenuPerformance.Add_Click({ Switch-Panel -PanelName "Performance" })
-$btnMenuProxy.Add_Click({ Switch-Panel -PanelName "Proxy" })
-$btnMenuFirewall.Add_Click({ Switch-Panel -PanelName "Firewall" })
+        Switch-Panel -PanelName 'Exclusions'
+        LoadRegistryKeys
+    })
+$btnMenuUpdates.Add_Click({ Switch-Panel -PanelName 'Updates' })
+$btnMenuLogs.Add_Click({ Switch-Panel -PanelName 'Logs' })
+$btnMenuPerformance.Add_Click({ Switch-Panel -PanelName 'Performance' })
+$btnMenuProxy.Add_Click({ Switch-Panel -PanelName 'Proxy' })
+$btnMenuFirewall.Add_Click({ Switch-Panel -PanelName 'Firewall' })
 # ==================== FUNCTIONS ====================
 
-Function Convert-BoolValue {
+function Convert-BoolValue {
     param([object]$Value)
     $bool = $null
     if ($Value -is [bool]) {
         $bool = $Value
-    } elseif ($Value -eq $true -or $Value -eq "True" -or $Value -eq 1) {
+    } elseif ($Value -eq $true -or $Value -eq 'True' -or $Value -eq 1) {
         $bool = $true
-    } elseif ($Value -eq $false -or $Value -eq "False" -or $Value -eq 0) {
+    } elseif ($Value -eq $false -or $Value -eq 'False' -or $Value -eq 0) {
         $bool = $false
     } else {
         return $Value
@@ -699,45 +763,47 @@ Function Convert-BoolValue {
     return -not $bool
 }
 
-Function GetASRRuleStatus {
+function GetASRRuleStatus {
     try {
         $ASRs = @()
         $ASRValue = @()
         $asrrules = @()
 
-        $asrrules += [PSCustomObject]@{ Name = "Block executable content from email client and webmail"; GUID = "BE9BA2D9-53EA-4CDC-84E5-9B1EEEE46550" }
-        $asrrules += [PSCustomObject]@{ Name = "Block all Office applications from creating child processes"; GUID = "D4F940AB-401B-4EFC-AADC-AD5F3C50688A" }
-        $asrrules += [PSCustomObject]@{ Name = "Block Office applications from creating executable content"; GUID = "3B576869-A4EC-4529-8536-B80A7769E899" }
-        $asrrules += [PSCustomObject]@{ Name = "Block Office applications from injecting code into other processes"; GUID = "75668C1F-73B5-4CF0-BB93-3ECF5CB7CC84" }
-        $asrrules += [PSCustomObject]@{ Name = "Block JavaScript or VBScript from launching downloaded executable content"; GUID = "D3E037E1-3EB8-44C8-A917-57927947596D" }
-        $asrrules += [PSCustomObject]@{ Name = "Block execution of potentially obfuscated scripts"; GUID = "5BEB7EFE-FD9A-4556-801D-275E5FFC04CC" }
-        $asrrules += [PSCustomObject]@{ Name = "Block Win32 API calls from Office macros"; GUID = "92E97FA1-2EDF-4476-BDD6-9DD0B4DDDC7B" }
-        $asrrules += [PSCustomObject]@{ Name = "Block executable files from running unless they meet a prevalence, age, or trusted list criterion"; GUID = "01443614-cd74-433a-b99e-2ecdc07bfc25" }
-        $asrrules += [PSCustomObject]@{ Name = "Use advanced protection against ransomware"; GUID = "c1db55ab-c21a-4637-bb3f-a12568109d35" }
-        $asrrules += [PSCustomObject]@{ Name = "Block credential stealing from the Windows local security authority subsystem (lsass.exe)"; GUID = "9e6c4e1f-7d60-472f-ba1a-a39ef669e4b2" }
-        $asrrules += [PSCustomObject]@{ Name = "Block process creations originating from PSExec and WMI commands"; GUID = "d1e49aac-8f56-4280-b9ba-993a6d77406c" }
-        $asrrules += [PSCustomObject]@{ Name = "Block untrusted and unsigned processes that run from USB"; GUID = "b2b3f03d-6a65-4f7b-a9c7-1c7ef74a9ba4" }
-        $asrrules += [PSCustomObject]@{ Name = "Block Office communication application from creating child processes"; GUID = "26190899-1602-49e8-8b27-eb1d0a1ce869" }
-        $asrrules += [PSCustomObject]@{ Name = "Block Adobe Reader from creating child processes"; GUID = "7674ba52-37eb-4a4f-a9a1-f0f9a1619a2c" }
-        $asrrules += [PSCustomObject]@{ Name = "Block persistence through WMI event subscription"; GUID = "e6db77e5-3df2-4cf1-b95a-636979351e5b" }
-        $asrrules += [PSCustomObject]@{ Name = "Block abuse of exploited vulnerable signed drivers"; GUID = "56a863a9-875e-4185-98a7-b882c64b5ce5" }
-        $asrrules += [PSCustomObject]@{ Name = "Block rebooting machine in Safe Mode"; GUID = "33ddedf1-c6e0-47cb-833e-de6133960387" }
-        $asrrules += [PSCustomObject]@{ Name = "Block use of copied or impersonated system tools"; GUID = "c0033c00-d16d-4114-a5a0-dc9b3a7d2ceb" }
-        $asrrules += [PSCustomObject]@{ Name = "Block Webshell creation for Servers"; GUID = "a8f5898e-1dc8-49a9-9878-85004b8a61e6" }
+        $asrrules += [PSCustomObject]@{ Name = 'Block executable content from email client and webmail'; GUID = 'BE9BA2D9-53EA-4CDC-84E5-9B1EEEE46550' }
+        $asrrules += [PSCustomObject]@{ Name = 'Block all Office applications from creating child processes'; GUID = 'D4F940AB-401B-4EFC-AADC-AD5F3C50688A' }
+        $asrrules += [PSCustomObject]@{ Name = 'Block Office applications from creating executable content'; GUID = '3B576869-A4EC-4529-8536-B80A7769E899' }
+        $asrrules += [PSCustomObject]@{ Name = 'Block Office applications from injecting code into other processes'; GUID = '75668C1F-73B5-4CF0-BB93-3ECF5CB7CC84' }
+        $asrrules += [PSCustomObject]@{ Name = 'Block JavaScript or VBScript from launching downloaded executable content'; GUID = 'D3E037E1-3EB8-44C8-A917-57927947596D' }
+        $asrrules += [PSCustomObject]@{ Name = 'Block execution of potentially obfuscated scripts'; GUID = '5BEB7EFE-FD9A-4556-801D-275E5FFC04CC' }
+        $asrrules += [PSCustomObject]@{ Name = 'Block Win32 API calls from Office macros'; GUID = '92E97FA1-2EDF-4476-BDD6-9DD0B4DDDC7B' }
+        $asrrules += [PSCustomObject]@{ Name = 'Block executable files from running unless they meet a prevalence, age, or trusted list criterion'; GUID = '01443614-cd74-433a-b99e-2ecdc07bfc25' }
+        $asrrules += [PSCustomObject]@{ Name = 'Use advanced protection against ransomware'; GUID = 'c1db55ab-c21a-4637-bb3f-a12568109d35' }
+        $asrrules += [PSCustomObject]@{ Name = 'Block credential stealing from the Windows local security authority subsystem (lsass.exe)'; GUID = '9e6c4e1f-7d60-472f-ba1a-a39ef669e4b2' }
+        $asrrules += [PSCustomObject]@{ Name = 'Block process creations originating from PSExec and WMI commands'; GUID = 'd1e49aac-8f56-4280-b9ba-993a6d77406c' }
+        $asrrules += [PSCustomObject]@{ Name = 'Block untrusted and unsigned processes that run from USB'; GUID = 'b2b3f03d-6a65-4f7b-a9c7-1c7ef74a9ba4' }
+        $asrrules += [PSCustomObject]@{ Name = 'Block Office communication application from creating child processes'; GUID = '26190899-1602-49e8-8b27-eb1d0a1ce869' }
+        $asrrules += [PSCustomObject]@{ Name = 'Block Adobe Reader from creating child processes'; GUID = '7674ba52-37eb-4a4f-a9a1-f0f9a1619a2c' }
+        $asrrules += [PSCustomObject]@{ Name = 'Block persistence through WMI event subscription'; GUID = 'e6db77e5-3df2-4cf1-b95a-636979351e5b' }
+        $asrrules += [PSCustomObject]@{ Name = 'Block abuse of exploited vulnerable signed drivers'; GUID = '56a863a9-875e-4185-98a7-b882c64b5ce5' }
+        $asrrules += [PSCustomObject]@{ Name = 'Block rebooting machine in Safe Mode'; GUID = '33ddedf1-c6e0-47cb-833e-de6133960387' }
+        $asrrules += [PSCustomObject]@{ Name = 'Block use of copied or impersonated system tools'; GUID = 'c0033c00-d16d-4114-a5a0-dc9b3a7d2ceb' }
+        $asrrules += [PSCustomObject]@{ Name = 'Block Webshell creation for Servers'; GUID = 'a8f5898e-1dc8-49a9-9878-85004b8a61e6' }
 
-        $enabledvalues = "Not Enabled", "Enabled", "Audit", "NA3", "NA4", "NA5", "Warning"
+        $enabledvalues = 'Not Enabled', 'Enabled', 'Audit', 'NA3', 'NA4', 'NA5', 'Warning'
         $results = Get-MpPreference
 
         if (-not [string]::IsNullOrEmpty($results.AttackSurfaceReductionRules_ids)) {
             foreach ($id in $asrrules.GUID) {
-                $index = [Array]::FindIndex($asrrules, [Predicate[object]]{ param($r) $r.GUID -eq $id })
-                if ($index -eq -1) { continue }
+                $index = [Array]::FindIndex($asrrules, [Predicate[object]] { param($r) $r.GUID -eq $id })
+                if ($index -eq -1) {
+                    continue 
+                }
 
                 $count = 0
                 foreach ($entry in $results.AttackSurfaceReductionRules_ids) {
                     if ($entry -match $id) {
                         $enabled = $results.AttackSurfaceReductionRules_actions[$count]
-                        if ($enabled -in 0,1,2,6) {
+                        if ($enabled -in 0, 1, 2, 6) {
                             $ASRs += $asrrules[$index].Name
                             $ASRValue += $enabledvalues[$enabled]
                         }
@@ -753,39 +819,39 @@ Function GetASRRuleStatus {
                 }
             }
             return $Results
+        } else {
+            return 'ASR rules empty'
         }
-        else {
-            return "ASR rules empty"
-        }
+    } catch {
+        [System.Windows.MessageBox]::Show($Error[0], 'Confirm', 'OK', 'Error') 
     }
-    catch { [System.Windows.MessageBox]::Show($Error[0], 'Confirm', 'OK', 'Error') }
 }
 
-Function GetASRPerRuleExclusions {
+function GetASRPerRuleExclusions {
     try {
         $asrrules = @(
-            [PSCustomObject]@{ Name = "Block executable content from email client and webmail"; GUID = "BE9BA2D9-53EA-4CDC-84E5-9B1EEEE46550" }
-            [PSCustomObject]@{ Name = "Block all Office applications from creating child processes"; GUID = "D4F940AB-401B-4EFC-AADC-AD5F3C50688A" }
-            [PSCustomObject]@{ Name = "Block Office applications from creating executable content"; GUID = "3B576869-A4EC-4529-8536-B80A7769E899" }
-            [PSCustomObject]@{ Name = "Block Office applications from injecting code into other processes"; GUID = "75668C1F-73B5-4CF0-BB93-3ECF5CB7CC84" }
-            [PSCustomObject]@{ Name = "Block JavaScript or VBScript from launching downloaded executable content"; GUID = "D3E037E1-3EB8-44C8-A917-57927947596D" }
-            [PSCustomObject]@{ Name = "Block execution of potentially obfuscated scripts"; GUID = "5BEB7EFE-FD9A-4556-801D-275E5FFC04CC" }
-            [PSCustomObject]@{ Name = "Block Win32 API calls from Office macros"; GUID = "92E97FA1-2EDF-4476-BDD6-9DD0B4DDDC7B" }
-            [PSCustomObject]@{ Name = "Block executable files from running unless they meet a prevalence, age, or trusted list criterion"; GUID = "01443614-cd74-433a-b99e-2ecdc07bfc25" }
-            [PSCustomObject]@{ Name = "Use advanced protection against ransomware"; GUID = "c1db55ab-c21a-4637-bb3f-a12568109d35" }
-            [PSCustomObject]@{ Name = "Block credential stealing from the Windows local security authority subsystem (lsass.exe)"; GUID = "9e6c4e1f-7d60-472f-ba1a-a39ef669e4b2" }
-            [PSCustomObject]@{ Name = "Block process creations originating from PSExec and WMI commands"; GUID = "d1e49aac-8f56-4280-b9ba-993a6d77406c" }
-            [PSCustomObject]@{ Name = "Block untrusted and unsigned processes that run from USB"; GUID = "b2b3f03d-6a65-4f7b-a9c7-1c7ef74a9ba4" }
-            [PSCustomObject]@{ Name = "Block Office communication application from creating child processes"; GUID = "26190899-1602-49e8-8b27-eb1d0a1ce869" }
-            [PSCustomObject]@{ Name = "Block Adobe Reader from creating child processes"; GUID = "7674ba52-37eb-4a4f-a9a1-f0f9a1619a2c" }
-            [PSCustomObject]@{ Name = "Block persistence through WMI event subscription"; GUID = "e6db77e5-3df2-4cf1-b95a-636979351e5b" }
-            [PSCustomObject]@{ Name = "Block abuse of exploited vulnerable signed drivers"; GUID = "56a863a9-875e-4185-98a7-b882c64b5ce5" }
-            [PSCustomObject]@{ Name = "Block rebooting machine in Safe Mode"; GUID = "33ddedf1-c6e0-47cb-833e-de6133960387" }
-            [PSCustomObject]@{ Name = "Block use of copied or impersonated system tools"; GUID = "c0033c00-d16d-4114-a5a0-dc9b3a7d2ceb" }
-            [PSCustomObject]@{ Name = "Block Webshell creation for Servers"; GUID = "a8f5898e-1dc8-49a9-9878-85004b8a61e6" }
+            [PSCustomObject]@{ Name = 'Block executable content from email client and webmail'; GUID = 'BE9BA2D9-53EA-4CDC-84E5-9B1EEEE46550' }
+            [PSCustomObject]@{ Name = 'Block all Office applications from creating child processes'; GUID = 'D4F940AB-401B-4EFC-AADC-AD5F3C50688A' }
+            [PSCustomObject]@{ Name = 'Block Office applications from creating executable content'; GUID = '3B576869-A4EC-4529-8536-B80A7769E899' }
+            [PSCustomObject]@{ Name = 'Block Office applications from injecting code into other processes'; GUID = '75668C1F-73B5-4CF0-BB93-3ECF5CB7CC84' }
+            [PSCustomObject]@{ Name = 'Block JavaScript or VBScript from launching downloaded executable content'; GUID = 'D3E037E1-3EB8-44C8-A917-57927947596D' }
+            [PSCustomObject]@{ Name = 'Block execution of potentially obfuscated scripts'; GUID = '5BEB7EFE-FD9A-4556-801D-275E5FFC04CC' }
+            [PSCustomObject]@{ Name = 'Block Win32 API calls from Office macros'; GUID = '92E97FA1-2EDF-4476-BDD6-9DD0B4DDDC7B' }
+            [PSCustomObject]@{ Name = 'Block executable files from running unless they meet a prevalence, age, or trusted list criterion'; GUID = '01443614-cd74-433a-b99e-2ecdc07bfc25' }
+            [PSCustomObject]@{ Name = 'Use advanced protection against ransomware'; GUID = 'c1db55ab-c21a-4637-bb3f-a12568109d35' }
+            [PSCustomObject]@{ Name = 'Block credential stealing from the Windows local security authority subsystem (lsass.exe)'; GUID = '9e6c4e1f-7d60-472f-ba1a-a39ef669e4b2' }
+            [PSCustomObject]@{ Name = 'Block process creations originating from PSExec and WMI commands'; GUID = 'd1e49aac-8f56-4280-b9ba-993a6d77406c' }
+            [PSCustomObject]@{ Name = 'Block untrusted and unsigned processes that run from USB'; GUID = 'b2b3f03d-6a65-4f7b-a9c7-1c7ef74a9ba4' }
+            [PSCustomObject]@{ Name = 'Block Office communication application from creating child processes'; GUID = '26190899-1602-49e8-8b27-eb1d0a1ce869' }
+            [PSCustomObject]@{ Name = 'Block Adobe Reader from creating child processes'; GUID = '7674ba52-37eb-4a4f-a9a1-f0f9a1619a2c' }
+            [PSCustomObject]@{ Name = 'Block persistence through WMI event subscription'; GUID = 'e6db77e5-3df2-4cf1-b95a-636979351e5b' }
+            [PSCustomObject]@{ Name = 'Block abuse of exploited vulnerable signed drivers'; GUID = '56a863a9-875e-4185-98a7-b882c64b5ce5' }
+            [PSCustomObject]@{ Name = 'Block rebooting machine in Safe Mode'; GUID = '33ddedf1-c6e0-47cb-833e-de6133960387' }
+            [PSCustomObject]@{ Name = 'Block use of copied or impersonated system tools'; GUID = 'c0033c00-d16d-4114-a5a0-dc9b3a7d2ceb' }
+            [PSCustomObject]@{ Name = 'Block Webshell creation for Servers'; GUID = 'a8f5898e-1dc8-49a9-9878-85004b8a61e6' }
         )
 
-        $basePath = "HKLM:\SOFTWARE\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR"
+        $basePath = 'HKLM:\SOFTWARE\Microsoft\Windows Defender\Windows Defender Exploit Guard\ASR'
         $results = @()
 
         # Check global ASR exclusions
@@ -795,7 +861,7 @@ Function GetASRPerRuleExclusions {
             if ($globalExcl) {
                 $globalExcl.PSObject.Properties | Where-Object { $_.Name -notmatch '^PS' } | ForEach-Object {
                     $results += [PSCustomObject]@{
-                        Rule      = "(Global ASR Exclusion)"
+                        Rule      = '(Global ASR Exclusion)'
                         Exclusion = $_.Name
                     }
                 }
@@ -809,7 +875,9 @@ Function GetASRPerRuleExclusions {
             foreach ($ruleKey in $ruleGuids) {
                 $ruleGuid = $ruleKey.PSChildName
                 $ruleName = ($asrrules | Where-Object { $_.GUID -ieq $ruleGuid }).Name
-                if (-not $ruleName) { $ruleName = "Unknown rule ($ruleGuid)" }
+                if (-not $ruleName) {
+                    $ruleName = "Unknown rule ($ruleGuid)" 
+                }
 
                 $ruleProps = Get-ItemProperty -Path $ruleKey.PSPath -ErrorAction SilentlyContinue
                 if ($ruleProps) {
@@ -824,143 +892,148 @@ Function GetASRPerRuleExclusions {
         }
 
         if ($results.Count -eq 0) {
-            return "No per-rule ASR exclusions found"
+            return 'No per-rule ASR exclusions found'
         }
 
         return $results
+    } catch {
+        [System.Windows.MessageBox]::Show($Error[0], 'Error', 'OK', 'Error') 
     }
-    catch { [System.Windows.MessageBox]::Show($Error[0], 'Error', 'OK', 'Error') }
 }
 
-Function LoadRegistryKeys {
+function LoadRegistryKeys {
     $managedDefenderValue = $null
     $enrollmentValue = $null
     $disableLocalAdminMergeEnabled = $false
 
     try {
-        $ManagedDefenderProductType = Get-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows Defender" -Name "ManagedDefenderProductType" -ErrorAction SilentlyContinue
+        $ManagedDefenderProductType = Get-ItemProperty -Path 'HKLM:\SOFTWARE\Microsoft\Windows Defender' -Name 'ManagedDefenderProductType' -ErrorAction SilentlyContinue
         if ($ManagedDefenderProductType) {
             $managedDefenderValue = $ManagedDefenderProductType.ManagedDefenderProductType
         }
     } catch {
-        $lblManagedDefenderProductType.Content = "Error reading registry"
-        $lblManagedDefenderProductType.Foreground = "#FFFF0000"
-        $lblEnrollmentStatus.Content = "Error reading registry"
-        $lblEnrollmentStatus.Foreground = "#FFFF0000"
-        $txtManagementStatus.Text = "Error reading registry"
-        $txtManagementStatus.Foreground = "#FFFF0000"
+        $lblManagedDefenderProductType.Content = 'Error reading registry'
+        $lblManagedDefenderProductType.Foreground = '#FFFF0000'
+        $lblEnrollmentStatus.Content = 'Error reading registry'
+        $lblEnrollmentStatus.Foreground = '#FFFF0000'
+        $txtManagementStatus.Text = 'Error reading registry'
+        $txtManagementStatus.Foreground = '#FFFF0000'
         return
     }
 
     try {
-        $EnrollmentStatus = Get-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\SenseCM" -Name "EnrollmentStatus" -ErrorAction SilentlyContinue
+        $EnrollmentStatus = Get-ItemProperty -Path 'HKLM:\SOFTWARE\Microsoft\SenseCM' -Name 'EnrollmentStatus' -ErrorAction SilentlyContinue
         if ($EnrollmentStatus) {
             $enrollmentValue = $EnrollmentStatus.EnrollmentStatus
         }
     } catch {
-        $lblEnrollmentStatus.Content = "Error reading registry"
-        $lblEnrollmentStatus.Foreground = "#FFFF0000"
-        $txtManagementStatus.Text = "Error reading registry"
-        $txtManagementStatus.Foreground = "#FFFF0000"
+        $lblEnrollmentStatus.Content = 'Error reading registry'
+        $lblEnrollmentStatus.Foreground = '#FFFF0000'
+        $txtManagementStatus.Text = 'Error reading registry'
+        $txtManagementStatus.Foreground = '#FFFF0000'
         return
     }
 
     # Check DisableLocalAdminMerge first (needed for tamper protection validation)
     try {
-        $DisableLocalAdminMerge = Get-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows Defender" -Name "DisableLocalAdminMerge" -ErrorAction SilentlyContinue
+        $DisableLocalAdminMerge = Get-ItemProperty -Path 'HKLM:\SOFTWARE\Policies\Microsoft\Windows Defender' -Name 'DisableLocalAdminMerge' -ErrorAction SilentlyContinue
         if ($DisableLocalAdminMerge -and $DisableLocalAdminMerge.DisableLocalAdminMerge -ne 0) {
             $disableLocalAdminMergeEnabled = $true
-            $lblDisableLocalAdminMerge.Content = "Enabled"
-            $lblDisableLocalAdminMerge.Foreground = "#FF008000"
+            $lblDisableLocalAdminMerge.Content = 'Enabled'
+            $lblDisableLocalAdminMerge.Foreground = '#FF008000'
         } else {
-            $lblDisableLocalAdminMerge.Content = "Not Configured"
-            $lblDisableLocalAdminMerge.Foreground = "#FF888888"
+            $lblDisableLocalAdminMerge.Content = 'Not Configured'
+            $lblDisableLocalAdminMerge.Foreground = '#FF888888'
         }
     } catch {
-        $lblDisableLocalAdminMerge.Content = "Not Configured"
-        $lblDisableLocalAdminMerge.Foreground = "#FF888888"
+        $lblDisableLocalAdminMerge.Content = 'Not Configured'
+        $lblDisableLocalAdminMerge.Foreground = '#FF888888'
     }
 
     # Check HideExclusionsFromLocalAdmins
     try {
-        $HideExclusions = Get-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows Defender" -Name "HideExclusionsFromLocalAdmins" -ErrorAction SilentlyContinue
+        $HideExclusions = Get-ItemProperty -Path 'HKLM:\SOFTWARE\Policies\Microsoft\Windows Defender' -Name 'HideExclusionsFromLocalAdmins' -ErrorAction SilentlyContinue
         if ($HideExclusions -and $HideExclusions.HideExclusionsFromLocalAdmins -ne 0) {
-            $lblHideExclusionsFromLocalAdmins.Content = "Enabled"
-            $lblHideExclusionsFromLocalAdmins.Foreground = "#FF008000"
+            $lblHideExclusionsFromLocalAdmins.Content = 'Enabled'
+            $lblHideExclusionsFromLocalAdmins.Foreground = '#FF008000'
         } else {
-            $lblHideExclusionsFromLocalAdmins.Content = "Not Configured"
-            $lblHideExclusionsFromLocalAdmins.Foreground = "#FF888888"
+            $lblHideExclusionsFromLocalAdmins.Content = 'Not Configured'
+            $lblHideExclusionsFromLocalAdmins.Foreground = '#FF888888'
         }
     } catch {
-        $lblHideExclusionsFromLocalAdmins.Content = "Not Configured"
-        $lblHideExclusionsFromLocalAdmins.Foreground = "#FF888888"
+        $lblHideExclusionsFromLocalAdmins.Content = 'Not Configured'
+        $lblHideExclusionsFromLocalAdmins.Foreground = '#FF888888'
     }
 
     # Determine management status based on the table
-    $managementStatus = ""
+    $managementStatus = ''
 
     if ($null -eq $managedDefenderValue -or $null -eq $enrollmentValue) {
-        $managementStatus = "Device management status unknown"
-        $lblManagedDefenderProductType.Content = if ($null -eq $managedDefenderValue) { "Not Found" } else { $managedDefenderValue }
-        $lblEnrollmentStatus.Content = if ($null -eq $enrollmentValue) { "Not Found" } else { $enrollmentValue }
-        $lblManagedDefenderProductType.Foreground = "#FF888888"
-        $lblEnrollmentStatus.Foreground = "#FF888888"
+        $managementStatus = 'Device management status unknown'
+        $lblManagedDefenderProductType.Content = if ($null -eq $managedDefenderValue) {
+            'Not Found' 
+        } else {
+            $managedDefenderValue 
+        }
+        $lblEnrollmentStatus.Content = if ($null -eq $enrollmentValue) {
+            'Not Found' 
+        } else {
+            $enrollmentValue 
+        }
+        $lblManagedDefenderProductType.Foreground = '#FF888888'
+        $lblEnrollmentStatus.Foreground = '#FF888888'
         $txtManagementStatus.Text = $managementStatus
-        $txtManagementStatus.Foreground = "#FF888888"
-    }
-    elseif ($managedDefenderValue -eq 6) {
+        $txtManagementStatus.Foreground = '#FF888888'
+    } elseif ($managedDefenderValue -eq 6) {
         $lblManagedDefenderProductType.Content = $managedDefenderValue
         $lblEnrollmentStatus.Content = $enrollmentValue
-        $lblManagedDefenderProductType.Foreground = "#FF000000"
-        $lblEnrollmentStatus.Foreground = "#FF000000"
+        $lblManagedDefenderProductType.Foreground = '#FF000000'
+        $lblEnrollmentStatus.Foreground = '#FF000000'
 
         if ($disableLocalAdminMergeEnabled) {
-            $managementStatus = "Device is managed with Intune only. Exclusions ARE tamper protected."
+            $managementStatus = 'Device is managed with Intune only. Exclusions ARE tamper protected.'
             $txtManagementStatus.Text = $managementStatus
-            $txtManagementStatus.Foreground = "#FF008000"
+            $txtManagementStatus.Foreground = '#FF008000'
         } else {
-            $managementStatus = "Device is managed with Intune only. To enable tamper protection for exclusions, you need to enable DisableLocalAdminMerge first."
+            $managementStatus = 'Device is managed with Intune only. To enable tamper protection for exclusions, you need to enable DisableLocalAdminMerge first.'
             $txtManagementStatus.Text = $managementStatus
-            $txtManagementStatus.Foreground = "#FFFF6600"
+            $txtManagementStatus.Foreground = '#FFFF6600'
         }
-    }
-    elseif ($managedDefenderValue -eq 7 -and $enrollmentValue -eq 4) {
+    } elseif ($managedDefenderValue -eq 7 -and $enrollmentValue -eq 4) {
         $lblManagedDefenderProductType.Content = $managedDefenderValue
         $lblEnrollmentStatus.Content = $enrollmentValue
-        $lblManagedDefenderProductType.Foreground = "#FF000000"
-        $lblEnrollmentStatus.Foreground = "#FF000000"
+        $lblManagedDefenderProductType.Foreground = '#FF000000'
+        $lblEnrollmentStatus.Foreground = '#FF000000'
 
         if ($disableLocalAdminMergeEnabled) {
-            $managementStatus = "Device is managed with Configuration Manager. Exclusions ARE tamper protected."
+            $managementStatus = 'Device is managed with Configuration Manager. Exclusions ARE tamper protected.'
             $txtManagementStatus.Text = $managementStatus
-            $txtManagementStatus.Foreground = "#FF008000"
+            $txtManagementStatus.Foreground = '#FF008000'
         } else {
-            $managementStatus = "Device is managed with Configuration Manager. To enable tamper protection for exclusions, you need to enable DisableLocalAdminMerge first."
+            $managementStatus = 'Device is managed with Configuration Manager. To enable tamper protection for exclusions, you need to enable DisableLocalAdminMerge first.'
             $txtManagementStatus.Text = $managementStatus
-            $txtManagementStatus.Foreground = "#FFFF6600"
+            $txtManagementStatus.Foreground = '#FFFF6600'
         }
-    }
-    elseif ($managedDefenderValue -eq 7 -and $enrollmentValue -eq 3) {
-        $managementStatus = "Device is co-managed with Configuration Manager and Intune. This is NOT supported for exclusions to be tamper protected."
+    } elseif ($managedDefenderValue -eq 7 -and $enrollmentValue -eq 3) {
+        $managementStatus = 'Device is co-managed with Configuration Manager and Intune. This is NOT supported for exclusions to be tamper protected.'
         $lblManagedDefenderProductType.Content = $managedDefenderValue
         $lblEnrollmentStatus.Content = $enrollmentValue
-        $lblManagedDefenderProductType.Foreground = "#FF000000"
-        $lblEnrollmentStatus.Foreground = "#FF000000"
+        $lblManagedDefenderProductType.Foreground = '#FF000000'
+        $lblEnrollmentStatus.Foreground = '#FF000000'
         $txtManagementStatus.Text = $managementStatus
-        $txtManagementStatus.Foreground = "#FFFF6600"
-    }
-    else {
-        $managementStatus = "Device is not managed by Intune only or Configuration Manager only. Exclusions are NOT tamper protected."
+        $txtManagementStatus.Foreground = '#FFFF6600'
+    } else {
+        $managementStatus = 'Device is not managed by Intune only or Configuration Manager only. Exclusions are NOT tamper protected.'
         $lblManagedDefenderProductType.Content = $managedDefenderValue
         $lblEnrollmentStatus.Content = $enrollmentValue
-        $lblManagedDefenderProductType.Foreground = "#FF000000"
-        $lblEnrollmentStatus.Foreground = "#FF000000"
+        $lblManagedDefenderProductType.Foreground = '#FF000000'
+        $lblEnrollmentStatus.Foreground = '#FF000000'
         $txtManagementStatus.Text = $managementStatus
-        $txtManagementStatus.Foreground = "#FFFF0000"
+        $txtManagementStatus.Foreground = '#FFFF0000'
     }
 }
 
-Function GetSignatureVersion {
+function GetSignatureVersion {
     try {
         $website = Invoke-WebRequest -Uri https://www.microsoft.com/en-us/wdsi/definitions/antimalware-definition-release-notes -UseBasicParsing
         $Pattern = '<span id="(?<dropdown>.*)" tabindex=(?<tabindex>.*) aria-label=(?<arialabel>.*) versionid=(?<versionid>.*)>(?<version>.*)</span>'
@@ -974,16 +1047,17 @@ Function GetSignatureVersion {
 
         $SignatureCurrentVersion = $SignatureVersionList | Select-Object -First 1
         return $SignatureCurrentVersion.version
+    } catch {
+        [System.Windows.MessageBox]::Show($Error[0], 'Confirm', 'OK', 'Error') 
     }
-    catch { [System.Windows.MessageBox]::Show($Error[0], 'Confirm', 'OK', 'Error') }
 }
 
-Function GetPlatformVersionAndEngine {
+function GetPlatformVersionAndEngine {
     try {
-        $PlatformURL = "https://www.microsoft.com/en-us/wdsi/defenderupdates?ranMID=24542&ranEAID=TnL5HPStwNw&ranSiteID=TnL5HPStwNw-ywv7diDw5Zx1d5vlZitDSQ&epi=TnL5HPStwNw-ywv7diDw5Zx1d5vlZitDSQ&irgwc=1&OCID=AID2000142_aff_7593_1243925&tduid=%28ir__cdyqnmiqgckftliekk0sohzjxn2xpksmaywdhgac00%29%287593%29%281243925%29%28TnL5HPStwNw-ywv7diDw5Zx1d5vlZitDSQ%29%28%29&irclickid=_cdyqnmiqgckftliekk0sohzjxn2xpksmaywdhgac00"
+        $PlatformURL = 'https://www.microsoft.com/en-us/wdsi/defenderupdates?ranMID=24542&ranEAID=TnL5HPStwNw&ranSiteID=TnL5HPStwNw-ywv7diDw5Zx1d5vlZitDSQ&epi=TnL5HPStwNw-ywv7diDw5Zx1d5vlZitDSQ&irgwc=1&OCID=AID2000142_aff_7593_1243925&tduid=%28ir__cdyqnmiqgckftliekk0sohzjxn2xpksmaywdhgac00%29%287593%29%281243925%29%28TnL5HPStwNw-ywv7diDw5Zx1d5vlZitDSQ%29%28%29&irclickid=_cdyqnmiqgckftliekk0sohzjxn2xpksmaywdhgac00'
 
         $Platformwebsite = Invoke-WebRequest -Uri $PlatformURL -UseBasicParsing
-        $PlatformPattern = "<li>Platform Version: <span>(?<Platform>.*)</span></li>"
+        $PlatformPattern = '<li>Platform Version: <span>(?<Platform>.*)</span></li>'
         $PlatformMatches = ($Platformwebsite | Select-String $PlatformPattern -AllMatches).Matches
 
         $PlatformVersionList = foreach ($group in $PlatformMatches) {
@@ -994,7 +1068,7 @@ Function GetPlatformVersionAndEngine {
 
         $CurrentPlatformVersion = ($PlatformVersionList).Platform_Version
 
-        $EnginePattern = "<li>Engine Version: <span>(?<Engine>.*)</span></li>"
+        $EnginePattern = '<li>Engine Version: <span>(?<Engine>.*)</span></li>'
         $EngineMatches = ($Platformwebsite | Select-String $EnginePattern -AllMatches).Matches
 
         $EngineVersionList = foreach ($group in $EngineMatches) {
@@ -1005,29 +1079,30 @@ Function GetPlatformVersionAndEngine {
 
         $CurrentEngineVersion = ($EngineVersionList).Engine_Version
         return $CurrentPlatformVersion, $CurrentEngineVersion
+    } catch {
+        [System.Windows.MessageBox]::Show($Error[0], 'Confirm', 'OK', 'Error') 
     }
-    catch { [System.Windows.MessageBox]::Show($Error[0], 'Confirm', 'OK', 'Error') }
 }
 
-Function ReadHashComputation {
-    if (Test-Path "HKLM:\Software\Policies\Microsoft\Windows Defender\MpEngine") {
-        $KeyReadHashComputation = Get-ItemProperty -Path "HKLM:\Software\Policies\Microsoft\Windows Defender\MpEngine" -Name "EnableFileHashComputation" -ErrorAction SilentlyContinue
+function ReadHashComputation {
+    if (Test-Path 'HKLM:\Software\Policies\Microsoft\Windows Defender\MpEngine') {
+        $KeyReadHashComputation = Get-ItemProperty -Path 'HKLM:\Software\Policies\Microsoft\Windows Defender\MpEngine' -Name 'EnableFileHashComputation' -ErrorAction SilentlyContinue
         if ($KeyReadHashComputation) {
-            return "Enabled by GPO"
+            return 'Enabled by GPO'
         }
     }
 
-    if (Test-Path "HKLM:\Software\Microsoft\Windows Defender\MpEngine") {
-        $KeyReadHashComputation = Get-ItemProperty -Path "HKLM:\Software\Microsoft\Windows Defender\MpEngine" -Name "EnableFileHashComputation" -ErrorAction SilentlyContinue
+    if (Test-Path 'HKLM:\Software\Microsoft\Windows Defender\MpEngine') {
+        $KeyReadHashComputation = Get-ItemProperty -Path 'HKLM:\Software\Microsoft\Windows Defender\MpEngine' -Name 'EnableFileHashComputation' -ErrorAction SilentlyContinue
         if ($KeyReadHashComputation) {
-            return "Enabled"
+            return 'Enabled'
         }
     }
 
-    return "Disabled"
+    return 'Disabled'
 }
 
-Function WindowLoader {
+function WindowLoader {
     try {
         $MPpreference = Get-MpPreference
         $MPComputerstatus = Get-MpComputerStatus
@@ -1065,18 +1140,46 @@ Function WindowLoader {
         $lblSignatureVersion_txt.Content = $MPComputerstatus.NISSignatureVersion
 
         # Scan Information
-        $lblFullScanAge_txt.Content = if ($MPComputerstatus.FullScanAge -eq 4294967295) { "Never" } else { "$($MPComputerstatus.FullScanAge) days" }
-        $lblFullScanStartTime_txt.Content = if ($MPComputerstatus.FullScanStartTime) { $MPComputerstatus.FullScanStartTime } else { "Never" }
-        $lblFullScanEndTime_txt.Content = if ($MPComputerstatus.FullScanEndTime) { $MPComputerstatus.FullScanEndTime } else { "Never" }
-        $lblQuickScanAge_txt.Content = if ($MPComputerstatus.QuickScanAge -eq 4294967295) { "Never" } else { "$($MPComputerstatus.QuickScanAge) days" }
-        $lblQuickScanStartTime_txt.Content = if ($MPComputerstatus.QuickScanStartTime) { $MPComputerstatus.QuickScanStartTime } else { "Never" }
-        $lblQuickScanEndTime_txt.Content = if ($MPComputerstatus.QuickScanEndTime) { $MPComputerstatus.QuickScanEndTime } else { "Never" }
+        $lblFullScanAge_txt.Content = if ($MPComputerstatus.FullScanAge -eq 4294967295) {
+            'Never' 
+        } else {
+            "$($MPComputerstatus.FullScanAge) days" 
+        }
+        $lblFullScanStartTime_txt.Content = if ($MPComputerstatus.FullScanStartTime) {
+            $MPComputerstatus.FullScanStartTime 
+        } else {
+            'Never' 
+        }
+        $lblFullScanEndTime_txt.Content = if ($MPComputerstatus.FullScanEndTime) {
+            $MPComputerstatus.FullScanEndTime 
+        } else {
+            'Never' 
+        }
+        $lblQuickScanAge_txt.Content = if ($MPComputerstatus.QuickScanAge -eq 4294967295) {
+            'Never' 
+        } else {
+            "$($MPComputerstatus.QuickScanAge) days" 
+        }
+        $lblQuickScanStartTime_txt.Content = if ($MPComputerstatus.QuickScanStartTime) {
+            $MPComputerstatus.QuickScanStartTime 
+        } else {
+            'Never' 
+        }
+        $lblQuickScanEndTime_txt.Content = if ($MPComputerstatus.QuickScanEndTime) {
+            $MPComputerstatus.QuickScanEndTime 
+        } else {
+            'Never' 
+        }
 
         # Additional Information
         $lblSignatureFallBackOrder_txt.Content = $MPpreference.SignatureFallbackOrder
         $lblSigUpdates_txt.Content = $MPComputerstatus.NISSignatureLastUpdated
-        $scanSourceMap = @{ 0 = "Unknown"; 1 = "User"; 2 = "System"; 3 = "Real-time"; 4 = "IOAV" }
-        $lblLastQuickScanSource_txt.Content = if ($scanSourceMap.ContainsKey([int]$MPComputerstatus.LastQuickScanSource)) { $scanSourceMap[[int]$MPComputerstatus.LastQuickScanSource] } else { $MPComputerstatus.LastQuickScanSource }
+        $scanSourceMap = @{ 0 = 'Unknown'; 1 = 'User'; 2 = 'System'; 3 = 'Real-time'; 4 = 'IOAV' }
+        $lblLastQuickScanSource_txt.Content = if ($scanSourceMap.ContainsKey([int]$MPComputerstatus.LastQuickScanSource)) {
+            $scanSourceMap[[int]$MPComputerstatus.LastQuickScanSource] 
+        } else {
+            $MPComputerstatus.LastQuickScanSource 
+        }
 
         # Protection Settings (from Get-MpPreference)
         $lblQuarantine_text.Content = $MPpreference.QuarantinePurgeItemsAfterDelay
@@ -1090,29 +1193,40 @@ Function WindowLoader {
         if ($MPpreference.ProxyPacUrl) {
             $lblProxyPac_Text.Content = $MPpreference.ProxyPacUrl
         } else {
-            $lblProxyPac_Text.Content = "No Proxy PAC Configured"
+            $lblProxyPac_Text.Content = 'No Proxy PAC Configured'
         }
 
         if ($MPpreference.ProxyServer) {
             $lblproxy_text.Content = $MPpreference.ProxyServer
         } else {
-            $lblproxy_text.Content = "No Proxy URL Configured"
+            $lblproxy_text.Content = 'No Proxy URL Configured'
         }
 
         $lblEnableFileHashComputation_Text.Content = ReadHashComputation
 
         switch ($MPpreference.CloudBlockLevel) {
-            0 { $lblCloudBlockLevel_txt.Content = "Default" }
-            1 { $lblCloudBlockLevel_txt.Content = "Moderate" }
-            2 { $lblCloudBlockLevel_txt.Content = "High" }
-            3 { $lblCloudBlockLevel_txt.Content = "High+" }
-            4 { $lblCloudBlockLevel_txt.Content = "Zero tolerance" }
+            0 {
+                $lblCloudBlockLevel_txt.Content = 'Default' 
+            }
+            1 {
+                $lblCloudBlockLevel_txt.Content = 'Moderate' 
+            }
+            2 {
+                $lblCloudBlockLevel_txt.Content = 'High' 
+            }
+            3 {
+                $lblCloudBlockLevel_txt.Content = 'High+' 
+            }
+            4 {
+                $lblCloudBlockLevel_txt.Content = 'Zero tolerance' 
+            }
         }
+    } catch {
+        [System.Windows.MessageBox]::Show($Error[0], 'Confirm', 'OK', 'Error') 
     }
-    catch { [System.Windows.MessageBox]::Show($Error[0], 'Confirm', 'OK', 'Error') }
 
-    if (Test-Path "HKLM:\SOFTWARE\Microsoft\Windows Advanced Threat Protection\Status") {
-        $RegisteryOrgID = (Get-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows Advanced Threat Protection\Status" -Name "OrgId" -ErrorAction SilentlyContinue).OrgId
+    if (Test-Path 'HKLM:\SOFTWARE\Microsoft\Windows Advanced Threat Protection\Status') {
+        $RegisteryOrgID = (Get-ItemProperty -Path 'HKLM:\SOFTWARE\Microsoft\Windows Advanced Threat Protection\Status' -Name 'OrgId' -ErrorAction SilentlyContinue).OrgId
         $lblOrgID_txt.Content = $RegisteryOrgID
     }
 
@@ -1122,19 +1236,19 @@ Function WindowLoader {
 
         foreach ($profile in $FWProfiles) {
             switch ($profile.Name) {
-                "Domain" {
+                'Domain' {
                     $lblFWDomainEnabled_txt.Content = $profile.Enabled
                     $lblFWDomainInbound_txt.Content = $profile.DefaultInboundAction
                     $lblFWDomainOutbound_txt.Content = $profile.DefaultOutboundAction
                     $lblFWDomainLogAllowed_txt.Content = $profile.LogAllowed
                 }
-                "Private" {
+                'Private' {
                     $lblFWPrivateEnabled_txt.Content = $profile.Enabled
                     $lblFWPrivateInbound_txt.Content = $profile.DefaultInboundAction
                     $lblFWPrivateOutbound_txt.Content = $profile.DefaultOutboundAction
                     $lblFWPrivateLogAllowed_txt.Content = $profile.LogAllowed
                 }
-                "Public" {
+                'Public' {
                     $lblFWPublicEnabled_txt.Content = $profile.Enabled
                     $lblFWPublicInbound_txt.Content = $profile.DefaultInboundAction
                     $lblFWPublicOutbound_txt.Content = $profile.DefaultOutboundAction
@@ -1142,16 +1256,16 @@ Function WindowLoader {
                 }
             }
         }
+    } catch { 
     }
-    catch { }
 }
 
-Function Show-EstimatedImpactWindow {
+function Show-EstimatedImpactWindow {
     param(
-        [Parameter(Mandatory=$true)]$ImpactData
+        [Parameter(Mandatory = $true)]$ImpactData
     )
 
-    $impactXaml = @"
+    $impactXaml = @'
 <Window
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -1194,14 +1308,14 @@ Function Show-EstimatedImpactWindow {
         </DataGrid>
     </Grid>
 </Window>
-"@
+'@
 
     $impactReader = (New-Object System.Xml.XmlNodeReader ([xml]$impactXaml))
     $impactWindow = [Windows.Markup.XamlReader]::Load($impactReader)
 
     # Get controls
-    $dgImpact = $impactWindow.FindName("dgImpact")
-    $txtImpactCount = $impactWindow.FindName("txtImpactCount")
+    $dgImpact = $impactWindow.FindName('dgImpact')
+    $txtImpactCount = $impactWindow.FindName('txtImpactCount')
 
     # Set data
     $dgImpact.ItemsSource = $ImpactData
@@ -1210,10 +1324,10 @@ Function Show-EstimatedImpactWindow {
     $impactWindow.ShowDialog() | Out-Null
 }
 
-Function Show-PerformanceReportWindow {
+function Show-PerformanceReportWindow {
     param(
-        [Parameter(Mandatory=$true)]$ReportData,
-        [Parameter(Mandatory=$true)][string]$Title
+        [Parameter(Mandatory = $true)]$ReportData,
+        [Parameter(Mandatory = $true)][string]$Title
     )
 
     $perfXaml = @"
@@ -1265,8 +1379,8 @@ Function Show-PerformanceReportWindow {
     $perfWindow = [Windows.Markup.XamlReader]::Load($perfReader)
 
     # Get controls
-    $dgPerformance = $perfWindow.FindName("dgPerformance")
-    $txtPerfCount = $perfWindow.FindName("txtPerfCount")
+    $dgPerformance = $perfWindow.FindName('dgPerformance')
+    $txtPerfCount = $perfWindow.FindName('txtPerfCount')
 
     # Convert data to array if it's not already an enumerable collection
     $dataArray = @()
@@ -1283,7 +1397,7 @@ Function Show-PerformanceReportWindow {
     $perfWindow.ShowDialog() | Out-Null
 }
 
-Function PerformanceReport {
+function PerformanceReport {
     try {
         if (Test-Path "$WorkingPath\MDAV_Recording.etl") {
             $PerformanceReport = Get-MpPerformanceReport -Path "$WorkingPath\MDAV_Recording.etl" -TopFiles:10 -TopExtensions:10 -TopProcesses:10 -TopScans:10 -Overview
@@ -1297,7 +1411,7 @@ Function PerformanceReport {
                     if ($PerformanceReport.Overview) {
                         # Process Overview data to convert PerfHints array to readable text
                         $processedOverview = $PerformanceReport.Overview | Select-Object *, @{
-                            Name = 'PerfHintsText'
+                            Name       = 'PerfHintsText'
                             Expression = {
                                 if ($_.PerfHints) {
                                     ($_.PerfHints | ForEach-Object { $_.ToString() }) -join '; '
@@ -1307,60 +1421,60 @@ Function PerformanceReport {
                             }
                         } | Select-Object * -ExcludeProperty PerfHints
 
-                        $reportsToOpen += @{Data = $processedOverview; Title = "Performance Report - Overview"}
+                        $reportsToOpen += @{Data = $processedOverview; Title = 'Performance Report - Overview' }
                     } else {
-                        $missingReports += "Overview"
+                        $missingReports += 'Overview'
                     }
                 }
 
                 if ($rdbTopfiles.IsChecked -eq $true) {
                     if ($PerformanceReport.TopFiles) {
-                        $reportsToOpen += @{Data = $PerformanceReport.TopFiles; Title = "Performance Report - Top Files Scans"}
+                        $reportsToOpen += @{Data = $PerformanceReport.TopFiles; Title = 'Performance Report - Top Files Scans' }
                     } else {
-                        $missingReports += "Top Files"
+                        $missingReports += 'Top Files'
                     }
                 }
 
                 if ($rdbTopExtensions.IsChecked -eq $true) {
                     if ($PerformanceReport.TopExtensions) {
-                        $reportsToOpen += @{Data = $PerformanceReport.TopExtensions; Title = "Performance Report - Top Extensions Scans"}
+                        $reportsToOpen += @{Data = $PerformanceReport.TopExtensions; Title = 'Performance Report - Top Extensions Scans' }
                     } else {
-                        $missingReports += "Top Extensions"
+                        $missingReports += 'Top Extensions'
                     }
                 }
 
                 if ($rdbTopProcess.IsChecked -eq $true) {
                     if ($PerformanceReport.TopProcesses) {
-                        $reportsToOpen += @{Data = $PerformanceReport.TopProcesses; Title = "Performance Report - Top Processes Scans"}
+                        $reportsToOpen += @{Data = $PerformanceReport.TopProcesses; Title = 'Performance Report - Top Processes Scans' }
                     } else {
-                        $missingReports += "Top Processes"
+                        $missingReports += 'Top Processes'
                     }
                 }
 
                 if ($rdbTopScans.IsChecked -eq $true) {
                     if ($PerformanceReport.TopScans) {
-                        $reportsToOpen += @{Data = $PerformanceReport.TopScans; Title = "Performance Report - Top Scans"}
+                        $reportsToOpen += @{Data = $PerformanceReport.TopScans; Title = 'Performance Report - Top Scans' }
                     } else {
-                        $missingReports += "Top Scans"
+                        $missingReports += 'Top Scans'
                     }
                 }
 
                 # Open all windows using runspaces to display them simultaneously
                 foreach ($report in $reportsToOpen) {
                     $runspace = [runspacefactory]::CreateRunspace()
-                    $runspace.ApartmentState = "STA"
-                    $runspace.ThreadOptions = "ReuseThread"
+                    $runspace.ApartmentState = 'STA'
+                    $runspace.ThreadOptions = 'ReuseThread'
                     $runspace.Open()
 
                     $powershell = [powershell]::Create()
                     $powershell.Runspace = $runspace
 
                     [void]$powershell.AddScript({
-                        param($reportData, $reportTitle)
+                            param($reportData, $reportTitle)
 
-                        Add-Type -AssemblyName PresentationFramework
+                            Add-Type -AssemblyName PresentationFramework
 
-                        $perfXaml = @"
+                            $perfXaml = @"
 <Window
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -1405,37 +1519,37 @@ Function PerformanceReport {
 </Window>
 "@
 
-                        $perfReader = (New-Object System.Xml.XmlNodeReader ([xml]$perfXaml))
-                        $perfWindow = [Windows.Markup.XamlReader]::Load($perfReader)
+                            $perfReader = (New-Object System.Xml.XmlNodeReader ([xml]$perfXaml))
+                            $perfWindow = [Windows.Markup.XamlReader]::Load($perfReader)
 
-                        $dgPerformance = $perfWindow.FindName("dgPerformance")
-                        $txtPerfCount = $perfWindow.FindName("txtPerfCount")
+                            $dgPerformance = $perfWindow.FindName('dgPerformance')
+                            $txtPerfCount = $perfWindow.FindName('txtPerfCount')
 
-                        $dataArray = @()
-                        if ($reportData -is [Array]) {
-                            $dataArray = $reportData
-                        } else {
-                            $dataArray = @($reportData)
-                        }
-
-                        # Add event handler to enable text wrapping for PerfHintsText column
-                        $dgPerformance.Add_AutoGeneratingColumn({
-                            param($sender, $e)
-                            if ($e.PropertyName -eq "PerfHintsText") {
-                                $e.Column.Width = 400
-                                $style = New-Object System.Windows.Style([System.Windows.Controls.TextBlock])
-                                $style.Setters.Add((New-Object System.Windows.Setter([System.Windows.Controls.TextBlock]::TextWrappingProperty, [System.Windows.TextWrapping]::Wrap)))
-                                $style.Setters.Add((New-Object System.Windows.Setter([System.Windows.Controls.TextBlock]::PaddingProperty, (New-Object System.Windows.Thickness(5)))))
-                                $e.Column.ElementStyle = $style
+                            $dataArray = @()
+                            if ($reportData -is [Array]) {
+                                $dataArray = $reportData
+                            } else {
+                                $dataArray = @($reportData)
                             }
-                        })
 
-                        $dgPerformance.ItemsSource = $dataArray
-                        $txtPerfCount.Text = "Showing $($dataArray.Count) items"
+                            # Add event handler to enable text wrapping for PerfHintsText column
+                            $dgPerformance.Add_AutoGeneratingColumn({
+                                    param($sender, $e)
+                                    if ($e.PropertyName -eq 'PerfHintsText') {
+                                        $e.Column.Width = 400
+                                        $style = New-Object System.Windows.Style([System.Windows.Controls.TextBlock])
+                                        $style.Setters.Add((New-Object System.Windows.Setter([System.Windows.Controls.TextBlock]::TextWrappingProperty, [System.Windows.TextWrapping]::Wrap)))
+                                        $style.Setters.Add((New-Object System.Windows.Setter([System.Windows.Controls.TextBlock]::PaddingProperty, (New-Object System.Windows.Thickness(5)))))
+                                        $e.Column.ElementStyle = $style
+                                    }
+                                })
 
-                        $perfWindow.ShowDialog() | Out-Null
+                            $dgPerformance.ItemsSource = $dataArray
+                            $txtPerfCount.Text = "Showing $($dataArray.Count) items"
 
-                    }).AddArgument($report.Data).AddArgument($report.Title)
+                            $perfWindow.ShowDialog() | Out-Null
+
+                        }).AddArgument($report.Data).AddArgument($report.Title)
 
                     $powershell.BeginInvoke()
                     Start-Sleep -Milliseconds 200
@@ -1446,27 +1560,29 @@ Function PerformanceReport {
                     [System.Windows.MessageBox]::Show("The following reports had no data: $($missingReports -join ', '). Please run the performance recording for a longer time!", 'Missing Data', 'OK', 'Warning')
                 }
             } else {
-                [System.Windows.MessageBox]::Show("Performance report is empty... please run again for a longer time!")
+                [System.Windows.MessageBox]::Show('Performance report is empty... please run again for a longer time!')
             }
         }
+    } catch {
+        [System.Windows.MessageBox]::Show($Error[0], 'Confirm', 'OK', 'Error') 
     }
-    catch { [System.Windows.MessageBox]::Show($Error[0], 'Confirm', 'OK', 'Error') }
 }
 
-Function PerformanceAnalyze {
+function PerformanceAnalyze {
     try {
         $arg = "New-MpPerformanceRecording -RecordTo `"$WorkingPath\MDAV_Recording.etl`""
-        Start-Process powershell.exe -ArgumentList "-NoExit", "-Command", $arg -Wait
+        Start-Process powershell.exe -ArgumentList '-NoExit', '-Command', $arg -Wait
+    } catch {
+        [System.Windows.MessageBox]::Show($Error[0], 'Confirm', 'OK', 'Error') 
     }
-    catch { [System.Windows.MessageBox]::Show($Error[0], 'Confirm', 'OK', 'Error') }
 }
 
-Function Show-FirewallRulesWindow {
+function Show-FirewallRulesWindow {
     param(
-        [Parameter(Mandatory=$true)]$RulesData
+        [Parameter(Mandatory = $true)]$RulesData
     )
 
-    $fwXaml = @"
+    $fwXaml = @'
 <Window
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -1599,19 +1715,19 @@ Function Show-FirewallRulesWindow {
         </DataGrid>
     </Grid>
 </Window>
-"@
+'@
 
     $fwReader = (New-Object System.Xml.XmlNodeReader ([xml]$fwXaml))
     $fwWindow = [Windows.Markup.XamlReader]::Load($fwReader)
 
     # Get controls
-    $dgFirewallRules = $fwWindow.FindName("dgFirewallRules")
-    $txtSearch = $fwWindow.FindName("txtSearch")
-    $cmbDirection = $fwWindow.FindName("cmbDirection")
-    $cmbAction = $fwWindow.FindName("cmbAction")
-    $cmbEnabled = $fwWindow.FindName("cmbEnabled")
-    $cmbProfile = $fwWindow.FindName("cmbProfile")
-    $txtRuleCount = $fwWindow.FindName("txtRuleCount")
+    $dgFirewallRules = $fwWindow.FindName('dgFirewallRules')
+    $txtSearch = $fwWindow.FindName('txtSearch')
+    $cmbDirection = $fwWindow.FindName('cmbDirection')
+    $cmbAction = $fwWindow.FindName('cmbAction')
+    $cmbEnabled = $fwWindow.FindName('cmbEnabled')
+    $cmbProfile = $fwWindow.FindName('cmbProfile')
+    $txtRuleCount = $fwWindow.FindName('txtRuleCount')
 
     # Store original data
     $script:OriginalFWData = $RulesData
@@ -1639,19 +1755,19 @@ Function Show-FirewallRulesWindow {
                 $matchesSearch = ($_.DisplayName -like "*$searchText*") -or ($_.Program -like "*$searchText*")
             }
 
-            if ($directionFilter -ne "All") {
+            if ($directionFilter -ne 'All') {
                 $matchesDirection = $_.Direction -eq $directionFilter
             }
 
-            if ($actionFilter -ne "All") {
+            if ($actionFilter -ne 'All') {
                 $matchesAction = $_.Action -eq $actionFilter
             }
 
-            if ($enabledFilter -ne "All") {
+            if ($enabledFilter -ne 'All') {
                 $matchesEnabled = $_.Enabled -eq $enabledFilter
             }
 
-            if ($profileFilter -ne "All") {
+            if ($profileFilter -ne 'All') {
                 $matchesProfile = $_.Profile -like "*$profileFilter*"
             }
 
@@ -1672,12 +1788,12 @@ Function Show-FirewallRulesWindow {
     $fwWindow.ShowDialog() | Out-Null
 }
 
-Function Show-FirewallLogsWindow {
+function Show-FirewallLogsWindow {
     param(
-        [Parameter(Mandatory=$true)]$LogData
+        [Parameter(Mandatory = $true)]$LogData
     )
 
-    $fwLogXaml = @"
+    $fwLogXaml = @'
 <Window
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -1788,17 +1904,17 @@ Function Show-FirewallLogsWindow {
         </DataGrid>
     </Grid>
 </Window>
-"@
+'@
 
     $fwLogReader = (New-Object System.Xml.XmlNodeReader ([xml]$fwLogXaml))
     $fwLogWindow = [Windows.Markup.XamlReader]::Load($fwLogReader)
 
-    $dgFWLogs          = $fwLogWindow.FindName("dgFWLogs")
-    $txtFWLogSearch    = $fwLogWindow.FindName("txtFWLogSearch")
-    $cmbFWLogAction    = $fwLogWindow.FindName("cmbFWLogAction")
-    $cmbFWLogProtocol  = $fwLogWindow.FindName("cmbFWLogProtocol")
-    $cmbFWLogDirection = $fwLogWindow.FindName("cmbFWLogDirection")
-    $txtFWLogCount     = $fwLogWindow.FindName("txtFWLogCount")
+    $dgFWLogs = $fwLogWindow.FindName('dgFWLogs')
+    $txtFWLogSearch = $fwLogWindow.FindName('txtFWLogSearch')
+    $cmbFWLogAction = $fwLogWindow.FindName('cmbFWLogAction')
+    $cmbFWLogProtocol = $fwLogWindow.FindName('cmbFWLogProtocol')
+    $cmbFWLogDirection = $fwLogWindow.FindName('cmbFWLogDirection')
+    $txtFWLogCount = $fwLogWindow.FindName('txtFWLogCount')
 
     $script:OriginalFWLogData = $LogData
 
@@ -1806,21 +1922,29 @@ Function Show-FirewallLogsWindow {
     $txtFWLogCount.Text = "Showing $($LogData.Count) log entries"
 
     $ApplyFWLogFilters = {
-        $searchText   = $txtFWLogSearch.Text.ToLower()
+        $searchText = $txtFWLogSearch.Text.ToLower()
         $actionFilter = $cmbFWLogAction.SelectedItem.Content
-        $protoFilter  = $cmbFWLogProtocol.SelectedItem.Content
-        $dirFilter    = $cmbFWLogDirection.SelectedItem.Content
+        $protoFilter = $cmbFWLogProtocol.SelectedItem.Content
+        $dirFilter = $cmbFWLogDirection.SelectedItem.Content
 
         $filtered = $script:OriginalFWLogData | Where-Object {
             $matchSearch = $true
             $matchAction = $true
-            $matchProto  = $true
-            $matchDir    = $true
+            $matchProto = $true
+            $matchDir = $true
 
-            if ($searchText)              { $matchSearch = ($_.SrcIP -like "*$searchText*") -or ($_.DstIP -like "*$searchText*") }
-            if ($actionFilter -ne "All")  { $matchAction = $_.Action   -eq $actionFilter }
-            if ($protoFilter  -ne "All")  { $matchProto  = $_.Protocol -eq $protoFilter }
-            if ($dirFilter    -ne "All")  { $matchDir    = $_.Path     -eq $dirFilter }
+            if ($searchText) {
+                $matchSearch = ($_.SrcIP -like "*$searchText*") -or ($_.DstIP -like "*$searchText*") 
+            }
+            if ($actionFilter -ne 'All') {
+                $matchAction = $_.Action -eq $actionFilter 
+            }
+            if ($protoFilter -ne 'All') {
+                $matchProto = $_.Protocol -eq $protoFilter 
+            }
+            if ($dirFilter -ne 'All') {
+                $matchDir = $_.Path -eq $dirFilter 
+            }
 
             $matchSearch -and $matchAction -and $matchProto -and $matchDir
         }
@@ -1837,12 +1961,12 @@ Function Show-FirewallLogsWindow {
     $fwLogWindow.ShowDialog() | Out-Null
 }
 
-Function Show-ASRWindow {
+function Show-ASRWindow {
     param(
-        [Parameter(Mandatory=$true)]$ASRData
+        [Parameter(Mandatory = $true)]$ASRData
     )
 
-    $asrXaml = @"
+    $asrXaml = @'
 <Window
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -1903,15 +2027,15 @@ Function Show-ASRWindow {
         </DataGrid>
     </Grid>
 </Window>
-"@
+'@
 
     $asrReader = (New-Object System.Xml.XmlNodeReader ([xml]$asrXaml))
     $asrWindow = [Windows.Markup.XamlReader]::Load($asrReader)
 
     # Get controls
-    $dgASR = $asrWindow.FindName("dgASR")
-    $cmbStatus = $asrWindow.FindName("cmbStatus")
-    $txtASRCount = $asrWindow.FindName("txtASRCount")
+    $dgASR = $asrWindow.FindName('dgASR')
+    $cmbStatus = $asrWindow.FindName('cmbStatus')
+    $txtASRCount = $asrWindow.FindName('txtASRCount')
 
     # Store original data
     $script:OriginalASRData = $ASRData
@@ -1922,27 +2046,27 @@ Function Show-ASRWindow {
 
     # Filter by status
     $cmbStatus.Add_SelectionChanged({
-        $statusFilter = $cmbStatus.SelectedItem.Content
+            $statusFilter = $cmbStatus.SelectedItem.Content
 
-        if ($statusFilter -eq "All") {
-            $dgASR.ItemsSource = $script:OriginalASRData
-            $txtASRCount.Text = "Showing $($script:OriginalASRData.Count) ASR rules"
-        } else {
-            $filtered = $script:OriginalASRData | Where-Object { $_.Status -eq $statusFilter }
-            $dgASR.ItemsSource = $filtered
-            $txtASRCount.Text = "Showing $($filtered.Count) of $($script:OriginalASRData.Count) ASR rules"
-        }
-    })
+            if ($statusFilter -eq 'All') {
+                $dgASR.ItemsSource = $script:OriginalASRData
+                $txtASRCount.Text = "Showing $($script:OriginalASRData.Count) ASR rules"
+            } else {
+                $filtered = $script:OriginalASRData | Where-Object { $_.Status -eq $statusFilter }
+                $dgASR.ItemsSource = $filtered
+                $txtASRCount.Text = "Showing $($filtered.Count) of $($script:OriginalASRData.Count) ASR rules"
+            }
+        })
 
     $asrWindow.ShowDialog() | Out-Null
 }
 
-Function Show-ASRExclusionsWindow {
+function Show-ASRExclusionsWindow {
     param(
-        [Parameter(Mandatory=$true)]$ExclusionData
+        [Parameter(Mandatory = $true)]$ExclusionData
     )
 
-    $asrExclXaml = @"
+    $asrExclXaml = @'
 <Window
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -1999,14 +2123,14 @@ Function Show-ASRExclusionsWindow {
         </DataGrid>
     </Grid>
 </Window>
-"@
+'@
 
     $asrExclReader = (New-Object System.Xml.XmlNodeReader ([xml]$asrExclXaml))
     $asrExclWindow = [Windows.Markup.XamlReader]::Load($asrExclReader)
 
-    $dgASRExcl = $asrExclWindow.FindName("dgASRExcl")
-    $cmbASRExclRule = $asrExclWindow.FindName("cmbASRExclRule")
-    $txtASRExclCount = $asrExclWindow.FindName("txtASRExclCount")
+    $dgASRExcl = $asrExclWindow.FindName('dgASRExcl')
+    $cmbASRExclRule = $asrExclWindow.FindName('cmbASRExclRule')
+    $txtASRExclCount = $asrExclWindow.FindName('txtASRExclCount')
 
     $script:OriginalASRExclData = $ExclusionData
 
@@ -2022,27 +2146,27 @@ Function Show-ASRExclusionsWindow {
     $txtASRExclCount.Text = "Showing $($ExclusionData.Count) exclusions"
 
     $cmbASRExclRule.Add_SelectionChanged({
-        $ruleFilter = $cmbASRExclRule.SelectedItem.Content
+            $ruleFilter = $cmbASRExclRule.SelectedItem.Content
 
-        if ($ruleFilter -eq "All") {
-            $dgASRExcl.ItemsSource = $script:OriginalASRExclData
-            $txtASRExclCount.Text = "Showing $($script:OriginalASRExclData.Count) exclusions"
-        } else {
-            $filtered = $script:OriginalASRExclData | Where-Object { $_.Rule -eq $ruleFilter }
-            $dgASRExcl.ItemsSource = $filtered
-            $txtASRExclCount.Text = "Showing $($filtered.Count) of $($script:OriginalASRExclData.Count) exclusions"
-        }
-    })
+            if ($ruleFilter -eq 'All') {
+                $dgASRExcl.ItemsSource = $script:OriginalASRExclData
+                $txtASRExclCount.Text = "Showing $($script:OriginalASRExclData.Count) exclusions"
+            } else {
+                $filtered = $script:OriginalASRExclData | Where-Object { $_.Rule -eq $ruleFilter }
+                $dgASRExcl.ItemsSource = $filtered
+                $txtASRExclCount.Text = "Showing $($filtered.Count) of $($script:OriginalASRExclData.Count) exclusions"
+            }
+        })
 
     $asrExclWindow.ShowDialog() | Out-Null
 }
 
-Function Show-ExclusionsWindow {
+function Show-ExclusionsWindow {
     param(
-        [Parameter(Mandatory=$true)]$ExclusionData
+        [Parameter(Mandatory = $true)]$ExclusionData
     )
 
-    $exclXaml = @"
+    $exclXaml = @'
 <Window
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -2105,16 +2229,16 @@ Function Show-ExclusionsWindow {
         </DataGrid>
     </Grid>
 </Window>
-"@
+'@
 
     $exclReader = (New-Object System.Xml.XmlNodeReader ([xml]$exclXaml))
     $exclWindow = [Windows.Markup.XamlReader]::Load($exclReader)
 
     # Get controls
-    $dgExclusions = $exclWindow.FindName("dgExclusions")
-    $cmbType = $exclWindow.FindName("cmbType")
-    $txtSearch = $exclWindow.FindName("txtSearch")
-    $txtExclCount = $exclWindow.FindName("txtExclCount")
+    $dgExclusions = $exclWindow.FindName('dgExclusions')
+    $cmbType = $exclWindow.FindName('cmbType')
+    $txtSearch = $exclWindow.FindName('txtSearch')
+    $txtExclCount = $exclWindow.FindName('txtExclCount')
 
     # Store original data
     $script:OriginalExclData = $ExclusionData
@@ -2132,7 +2256,7 @@ Function Show-ExclusionsWindow {
             $matchesType = $true
             $matchesSearch = $true
 
-            if ($typeFilter -ne "All") {
+            if ($typeFilter -ne 'All') {
                 $matchesType = $_.Type -eq $typeFilter
             }
 
@@ -2154,11 +2278,11 @@ Function Show-ExclusionsWindow {
     $exclWindow.ShowDialog() | Out-Null
 }
 
-Function Show-LogWindow {
+function Show-LogWindow {
     param(
-        [Parameter(Mandatory=$true)]$LogData,
-        [Parameter(Mandatory=$true)][string]$Title,
-        [Parameter(Mandatory=$true)][string]$LogType
+        [Parameter(Mandatory = $true)]$LogData,
+        [Parameter(Mandatory = $true)][string]$Title,
+        [Parameter(Mandatory = $true)][string]$LogType
     )
 
     $logXaml = @"
@@ -2263,13 +2387,13 @@ Function Show-LogWindow {
     $logWindow = [Windows.Markup.XamlReader]::Load($logReader)
 
     # Get controls
-    $dgLogs = $logWindow.FindName("dgLogs")
-    $txtFilter = $logWindow.FindName("txtFilter")
-    $btnApplyFilter = $logWindow.FindName("btnApplyFilter")
-    $btnClearFilter = $logWindow.FindName("btnClearFilter")
-    $cmbLevel = $logWindow.FindName("cmbLevel")
-    $txtDetails = $logWindow.FindName("txtDetails")
-    $txtLogCount = $logWindow.FindName("txtLogCount")
+    $dgLogs = $logWindow.FindName('dgLogs')
+    $txtFilter = $logWindow.FindName('txtFilter')
+    $btnApplyFilter = $logWindow.FindName('btnApplyFilter')
+    $btnClearFilter = $logWindow.FindName('btnClearFilter')
+    $cmbLevel = $logWindow.FindName('cmbLevel')
+    $txtDetails = $logWindow.FindName('txtDetails')
+    $txtLogCount = $logWindow.FindName('txtLogCount')
 
     # Store original data
     $script:OriginalLogData = $LogData
@@ -2292,7 +2416,7 @@ Function Show-LogWindow {
                 $matchesText = ($_.Message -like "*$filterText*") -or ($_.Id -like "*$filterText*")
             }
 
-            if ($levelFilter -ne "All") {
+            if ($levelFilter -ne 'All') {
                 $matchesLevel = $_.LevelDisplayName -eq $levelFilter
             }
 
@@ -2307,28 +2431,28 @@ Function Show-LogWindow {
     $btnApplyFilter.Add_Click($ApplyFilters)
 
     $btnClearFilter.Add_Click({
-        $txtFilter.Text = ""
-        $cmbLevel.SelectedIndex = 0
-        $dgLogs.ItemsSource = $script:OriginalLogData
-        $txtLogCount.Text = "Showing $($script:OriginalLogData.Count) log entries"
-    })
+            $txtFilter.Text = ''
+            $cmbLevel.SelectedIndex = 0
+            $dgLogs.ItemsSource = $script:OriginalLogData
+            $txtLogCount.Text = "Showing $($script:OriginalLogData.Count) log entries"
+        })
 
     $cmbLevel.Add_SelectionChanged($ApplyFilters)
 
     $txtFilter.Add_KeyDown({
-        param($sender, $e)
-        if ($e.Key -eq "Return") {
-            $ApplyFilters.Invoke()
-        }
-    })
+            param($sender, $e)
+            if ($e.Key -eq 'Return') {
+                $ApplyFilters.Invoke()
+            }
+        })
 
     # Show details when row is selected
     $dgLogs.Add_SelectionChanged({
-        if ($dgLogs.SelectedItem) {
-            $selectedLog = $dgLogs.SelectedItem
-            $txtDetails.Text = "Time: $($selectedLog.TimeCreated)`r`nEvent ID: $($selectedLog.Id)`r`nLevel: $($selectedLog.LevelDisplayName)`r`n`r`nMessage:`r`n$($selectedLog.Message)"
-        }
-    })
+            if ($dgLogs.SelectedItem) {
+                $selectedLog = $dgLogs.SelectedItem
+                $txtDetails.Text = "Time: $($selectedLog.TimeCreated)`r`nEvent ID: $($selectedLog.Id)`r`nLevel: $($selectedLog.LevelDisplayName)`r`n`r`nMessage:`r`n$($selectedLog.Message)"
+            }
+        })
 
     $logWindow.ShowDialog() | Out-Null
 }
@@ -2336,273 +2460,270 @@ Function Show-LogWindow {
 # ==================== EVENT HANDLERS ====================
 
 $MainWindow1.Add_Loaded({
-    try {
-        WindowLoader
-    }
-    catch { [System.Windows.MessageBox]::Show($Error[0], 'Confirm', 'OK', 'Error') }
-})
+        try {
+            WindowLoader
+        } catch {
+            [System.Windows.MessageBox]::Show($Error[0], 'Confirm', 'OK', 'Error') 
+        }
+    })
 
 $btnDownloadClientAnalyzer.Add_Click({
-    try {
-        $folder = (New-Object -ComObject Shell.Application).BrowseForFolder(0, "Select Destination Folder", 0).Self.Path
-        if ($folder) {
-            $url = "https://aka.ms/mdatpanalyzer"
-            $destination = Join-Path -Path $folder -ChildPath "MDEClientAnalyzer.zip"
-            Invoke-WebRequest -Uri $url -OutFile $destination
-            [System.Windows.MessageBox]::Show("File downloaded to $destination", 'Download Complete', 'OK', 'Information')
-        } else {
-            [System.Windows.MessageBox]::Show("No folder selected. Download canceled.", 'Canceled', 'OK', 'Warning')
+        try {
+            $folder = (New-Object -ComObject Shell.Application).BrowseForFolder(0, 'Select Destination Folder', 0).Self.Path
+            if ($folder) {
+                $url = 'https://aka.ms/mdatpanalyzer'
+                $destination = Join-Path -Path $folder -ChildPath 'MDEClientAnalyzer.zip'
+                Invoke-WebRequest -Uri $url -OutFile $destination
+                [System.Windows.MessageBox]::Show("File downloaded to $destination", 'Download Complete', 'OK', 'Information')
+            } else {
+                [System.Windows.MessageBox]::Show('No folder selected. Download canceled.', 'Canceled', 'OK', 'Warning')
+            }
+        } catch {
+            [System.Windows.MessageBox]::Show($Error[0], 'Confirm', 'OK', 'Error') 
         }
-    }
-    catch { [System.Windows.MessageBox]::Show($Error[0], 'Confirm', 'OK', 'Error') }
-})
+    })
 
 $btnUpdateIntel.Add_Click({
-    try {
-        $MainWindow1.Cursor = [System.Windows.Input.Cursors]::Wait
-        $arg = " -SignatureUpdate"
-        Start-Process "C:\Program Files\Windows Defender\MpCmdRun.exe" -ArgumentList $arg -Wait
-        $MainWindow1.Cursor = [System.Windows.Input.Cursors]::Arrow
-        [System.Windows.MessageBox]::Show("Signature update complete!", 'Update', 'OK', 'Information')
-    }
-    catch { [System.Windows.MessageBox]::Show($Error[0], 'Confirm', 'OK', 'Error') }
-})
+        try {
+            $MainWindow1.Cursor = [System.Windows.Input.Cursors]::Wait
+            $arg = ' -SignatureUpdate'
+            Start-Process 'C:\Program Files\Windows Defender\MpCmdRun.exe' -ArgumentList $arg -Wait
+            $MainWindow1.Cursor = [System.Windows.Input.Cursors]::Arrow
+            [System.Windows.MessageBox]::Show('Signature update complete!', 'Update', 'OK', 'Information')
+        } catch {
+            [System.Windows.MessageBox]::Show($Error[0], 'Confirm', 'OK', 'Error') 
+        }
+    })
 
 $btnShowSenseLogs.Add_Click({
-    try {
-        $MainWindow1.Cursor = [System.Windows.Input.Cursors]::Wait
-        $SenseLogs = Get-WinEvent -LogName "Microsoft-Windows-SENSE/Operational" -ErrorAction Stop |
-            Select-Object TimeCreated, Id, LevelDisplayName, Message
-        $MainWindow1.Cursor = [System.Windows.Input.Cursors]::Arrow
-        Show-LogWindow -LogData $SenseLogs -Title "SENSE Logs" -LogType "SENSE"
-    }
-    catch {
-        $MainWindow1.Cursor = [System.Windows.Input.Cursors]::Arrow
-        [System.Windows.MessageBox]::Show($Error[0], 'Error', 'OK', 'Error')
-    }
-})
+        try {
+            $MainWindow1.Cursor = [System.Windows.Input.Cursors]::Wait
+            $SenseLogs = Get-WinEvent -LogName 'Microsoft-Windows-SENSE/Operational' -ErrorAction Stop |
+                Select-Object TimeCreated, Id, LevelDisplayName, Message
+            $MainWindow1.Cursor = [System.Windows.Input.Cursors]::Arrow
+            Show-LogWindow -LogData $SenseLogs -Title 'SENSE Logs' -LogType 'SENSE'
+        } catch {
+            $MainWindow1.Cursor = [System.Windows.Input.Cursors]::Arrow
+            [System.Windows.MessageBox]::Show($Error[0], 'Error', 'OK', 'Error')
+        }
+    })
 
 $btnShowASR.Add_Click({
-    $MainWindow1.Cursor = [System.Windows.Input.Cursors]::Wait
-    try {
-        $GetASRRuleStatus = GetASRRuleStatus
-        $MainWindow1.Cursor = [System.Windows.Input.Cursors]::Arrow
+        $MainWindow1.Cursor = [System.Windows.Input.Cursors]::Wait
+        try {
+            $GetASRRuleStatus = GetASRRuleStatus
+            $MainWindow1.Cursor = [System.Windows.Input.Cursors]::Arrow
 
-        if ($GetASRRuleStatus -eq "ASR rules empty") {
-            [System.Windows.MessageBox]::Show("No ASR rules configured on this system.", 'ASR Rules', 'OK', 'Information')
-        } else {
-            Show-ASRWindow -ASRData $GetASRRuleStatus
+            if ($GetASRRuleStatus -eq 'ASR rules empty') {
+                [System.Windows.MessageBox]::Show('No ASR rules configured on this system.', 'ASR Rules', 'OK', 'Information')
+            } else {
+                Show-ASRWindow -ASRData $GetASRRuleStatus
+            }
+        } catch {
+            $MainWindow1.Cursor = [System.Windows.Input.Cursors]::Arrow
+            [System.Windows.MessageBox]::Show($Error[0], 'Error', 'OK', 'Error')
         }
-    }
-    catch {
-        $MainWindow1.Cursor = [System.Windows.Input.Cursors]::Arrow
-        [System.Windows.MessageBox]::Show($Error[0], 'Error', 'OK', 'Error')
-    }
-})
+    })
 
 $btnShowASRExclusions.Add_Click({
-    $MainWindow1.Cursor = [System.Windows.Input.Cursors]::Wait
-    try {
-        $asrExclusions = GetASRPerRuleExclusions
-        $MainWindow1.Cursor = [System.Windows.Input.Cursors]::Arrow
+        $MainWindow1.Cursor = [System.Windows.Input.Cursors]::Wait
+        try {
+            $asrExclusions = GetASRPerRuleExclusions
+            $MainWindow1.Cursor = [System.Windows.Input.Cursors]::Arrow
 
-        if ($asrExclusions -eq "No per-rule ASR exclusions found") {
-            [System.Windows.MessageBox]::Show("No per-rule ASR exclusions found in the registry.", 'ASR Exclusions', 'OK', 'Information')
-        } else {
-            Show-ASRExclusionsWindow -ExclusionData $asrExclusions
+            if ($asrExclusions -eq 'No per-rule ASR exclusions found') {
+                [System.Windows.MessageBox]::Show('No per-rule ASR exclusions found in the registry.', 'ASR Exclusions', 'OK', 'Information')
+            } else {
+                Show-ASRExclusionsWindow -ExclusionData $asrExclusions
+            }
+        } catch {
+            $MainWindow1.Cursor = [System.Windows.Input.Cursors]::Arrow
+            [System.Windows.MessageBox]::Show($Error[0], 'Error', 'OK', 'Error')
         }
-    }
-    catch {
-        $MainWindow1.Cursor = [System.Windows.Input.Cursors]::Arrow
-        [System.Windows.MessageBox]::Show($Error[0], 'Error', 'OK', 'Error')
-    }
-})
+    })
 
 $btnOpenExploitProtectionXML.Add_Click({
-    $MainWindow1.Cursor = [System.Windows.Input.Cursors]::Wait
-    try {
-        # Check if exploit protection XML exists in common locations
-        $possiblePaths = @(
-            "$env:ProgramData\Microsoft\Windows Defender\Platform\*\EpManifest.xml",
-            "$env:TEMP\ExploitProtection.xml"
-        )
+        $MainWindow1.Cursor = [System.Windows.Input.Cursors]::Wait
+        try {
+            # Check if exploit protection XML exists in common locations
+            $possiblePaths = @(
+                "$env:ProgramData\Microsoft\Windows Defender\Platform\*\EpManifest.xml",
+                "$env:TEMP\ExploitProtection.xml"
+            )
 
-        $xmlPath = $null
-        foreach ($path in $possiblePaths) {
-            $resolved = Resolve-Path $path -ErrorAction SilentlyContinue | Select-Object -First 1
-            if ($resolved) {
-                $xmlPath = $resolved.Path
-                break
+            $xmlPath = $null
+            foreach ($path in $possiblePaths) {
+                $resolved = Resolve-Path $path -ErrorAction SilentlyContinue | Select-Object -First 1
+                if ($resolved) {
+                    $xmlPath = $resolved.Path
+                    break
+                }
             }
-        }
 
-        # If not found, export it to temp location
-        if (-not $xmlPath) {
-            $xmlPath = "$env:TEMP\ExploitProtection.xml"
-            Get-ProcessMitigation -RegistryConfigFilePath $xmlPath -ErrorAction Stop
-        }
+            # If not found, export it to temp location
+            if (-not $xmlPath) {
+                $xmlPath = "$env:TEMP\ExploitProtection.xml"
+                Get-ProcessMitigation -RegistryConfigFilePath $xmlPath -ErrorAction Stop
+            }
 
-        $MainWindow1.Cursor = [System.Windows.Input.Cursors]::Arrow
+            $MainWindow1.Cursor = [System.Windows.Input.Cursors]::Arrow
 
-        # Open the XML file with default application (usually Notepad or default XML editor)
-        if (Test-Path $xmlPath) {
-            Start-Process $xmlPath
-        } else {
-            [System.Windows.MessageBox]::Show("Unable to locate or export Exploit Protection XML file.", 'Exploit Protection', 'OK', 'Warning')
+            # Open the XML file with default application (usually Notepad or default XML editor)
+            if (Test-Path $xmlPath) {
+                Start-Process $xmlPath
+            } else {
+                [System.Windows.MessageBox]::Show('Unable to locate or export Exploit Protection XML file.', 'Exploit Protection', 'OK', 'Warning')
+            }
+        } catch {
+            $MainWindow1.Cursor = [System.Windows.Input.Cursors]::Arrow
+            [System.Windows.MessageBox]::Show("Error: $($Error[0].Exception.Message)", 'Error', 'OK', 'Error')
         }
-    }
-    catch {
-        $MainWindow1.Cursor = [System.Windows.Input.Cursors]::Arrow
-        [System.Windows.MessageBox]::Show("Error: $($Error[0].Exception.Message)", 'Error', 'OK', 'Error')
-    }
-})
+    })
 
 $btnCheckForLastestUpdate.Add_Click({
-    $MainWindow1.Cursor = [System.Windows.Input.Cursors]::Wait
-    try {
-        $ReturnGetPlatformVersionAndEngine = GetPlatformVersionAndEngine
-        $lblLastestEngineVersion_txt.Content = $ReturnGetPlatformVersionAndEngine[0]
-        $lblLastestPlatformVersion_txt.Content = $ReturnGetPlatformVersionAndEngine[1]
-        $lblLatestSigVersion_txt.Content = GetSignatureVersion
-        $lblLastestEngineVersion_txt.Foreground = "#FF000000"
-        $lblLastestPlatformVersion_txt.Foreground = "#FF000000"
-        $MainWindow1.Cursor = [System.Windows.Input.Cursors]::Arrow
-    }
-    catch { [System.Windows.MessageBox]::Show($Error[0], 'Confirm', 'OK', 'Error') }
-})
+        $MainWindow1.Cursor = [System.Windows.Input.Cursors]::Wait
+        try {
+            $ReturnGetPlatformVersionAndEngine = GetPlatformVersionAndEngine
+            $lblLastestEngineVersion_txt.Content = $ReturnGetPlatformVersionAndEngine[0]
+            $lblLastestPlatformVersion_txt.Content = $ReturnGetPlatformVersionAndEngine[1]
+            $lblLatestSigVersion_txt.Content = GetSignatureVersion
+            $lblLastestEngineVersion_txt.Foreground = '#FF000000'
+            $lblLastestPlatformVersion_txt.Foreground = '#FF000000'
+            $MainWindow1.Cursor = [System.Windows.Input.Cursors]::Arrow
+        } catch {
+            [System.Windows.MessageBox]::Show($Error[0], 'Confirm', 'OK', 'Error') 
+        }
+    })
 
 $btnShowDefenderAVLogs.Add_Click({
-    try {
-        $MainWindow1.Cursor = [System.Windows.Input.Cursors]::Wait
-        $DefenderLogs = Get-WinEvent -LogName "Microsoft-Windows-Windows Defender/Operational" -MaxEvents 50 -ErrorAction Stop |
-            Select-Object TimeCreated, Id, LevelDisplayName, Message
-        $MainWindow1.Cursor = [System.Windows.Input.Cursors]::Arrow
-        Show-LogWindow -LogData $DefenderLogs -Title "Defender AV Logs" -LogType "Defender"
-    }
-    catch {
-        $MainWindow1.Cursor = [System.Windows.Input.Cursors]::Arrow
-        [System.Windows.MessageBox]::Show($Error[0], 'Error', 'OK', 'Error')
-    }
-})
+        try {
+            $MainWindow1.Cursor = [System.Windows.Input.Cursors]::Wait
+            $DefenderLogs = Get-WinEvent -LogName 'Microsoft-Windows-Windows Defender/Operational' -MaxEvents 50 -ErrorAction Stop |
+                Select-Object TimeCreated, Id, LevelDisplayName, Message
+            $MainWindow1.Cursor = [System.Windows.Input.Cursors]::Arrow
+            Show-LogWindow -LogData $DefenderLogs -Title 'Defender AV Logs' -LogType 'Defender'
+        } catch {
+            $MainWindow1.Cursor = [System.Windows.Input.Cursors]::Arrow
+            [System.Windows.MessageBox]::Show($Error[0], 'Error', 'OK', 'Error')
+        }
+    })
 
 $btnShowPerformanceReport.Add_Click({
-    try {
-        # Ask user if they want to open the recent report or a custom one
-        $result = [System.Windows.MessageBox]::Show(
-            "Do you want to open the recently recorded report?`n`nClick 'Yes' to open the recent report from this session.`nClick 'No' to browse for a custom ETL file.",
-            'Select Report Source',
-            'YesNoCancel',
-            'Question'
-        )
+        try {
+            # Ask user if they want to open the recent report or a custom one
+            $result = [System.Windows.MessageBox]::Show(
+                "Do you want to open the recently recorded report?`n`nClick 'Yes' to open the recent report from this session.`nClick 'No' to browse for a custom ETL file.",
+                'Select Report Source',
+                'YesNoCancel',
+                'Question'
+            )
 
-        $etlPath = $null
+            $etlPath = $null
 
-        if ($result -eq 'Yes') {
-            # Use the recently recorded report
-            $etlPath = "$WorkingPath\MDAV_Recording.etl"
-            if (-not (Test-Path $etlPath)) {
-                [System.Windows.MessageBox]::Show("No recent performance recording found. Please run 'Run Performance Analyzer' first or select a custom report.", 'Report Not Found', 'OK', 'Warning')
-                return
-            }
-        }
-        elseif ($result -eq 'No') {
-            # Open file dialog to browse for custom ETL file
-            Add-Type -AssemblyName System.Windows.Forms
-            $openFileDialog = New-Object System.Windows.Forms.OpenFileDialog
-            $openFileDialog.InitialDirectory = $WorkingPath
-            $openFileDialog.Filter = "ETL Files (*.etl)|*.etl|All Files (*.*)|*.*"
-            $openFileDialog.Title = "Select Performance Report ETL File"
+            if ($result -eq 'Yes') {
+                # Use the recently recorded report
+                $etlPath = "$WorkingPath\MDAV_Recording.etl"
+                if (-not (Test-Path $etlPath)) {
+                    [System.Windows.MessageBox]::Show("No recent performance recording found. Please run 'Run Performance Analyzer' first or select a custom report.", 'Report Not Found', 'OK', 'Warning')
+                    return
+                }
+            } elseif ($result -eq 'No') {
+                # Open file dialog to browse for custom ETL file
+                Add-Type -AssemblyName System.Windows.Forms
+                $openFileDialog = New-Object System.Windows.Forms.OpenFileDialog
+                $openFileDialog.InitialDirectory = $WorkingPath
+                $openFileDialog.Filter = 'ETL Files (*.etl)|*.etl|All Files (*.*)|*.*'
+                $openFileDialog.Title = 'Select Performance Report ETL File'
 
-            if ($openFileDialog.ShowDialog() -eq [System.Windows.Forms.DialogResult]::OK) {
-                $etlPath = $openFileDialog.FileName
+                if ($openFileDialog.ShowDialog() -eq [System.Windows.Forms.DialogResult]::OK) {
+                    $etlPath = $openFileDialog.FileName
+                } else {
+                    return
+                }
             } else {
+                # User clicked Cancel
                 return
             }
-        }
-        else {
-            # User clicked Cancel
-            return
-        }
 
-        # Process the selected ETL file
-        $MainWindow1.Cursor = [System.Windows.Input.Cursors]::Wait
+            # Process the selected ETL file
+            $MainWindow1.Cursor = [System.Windows.Input.Cursors]::Wait
 
-        if (Test-Path $etlPath) {
-            $PerformanceReport = Get-MpPerformanceReport -Path $etlPath -TopFiles:10 -TopExtensions:10 -TopProcesses:10 -TopScans:10 -Overview
+            if (Test-Path $etlPath) {
+                $PerformanceReport = Get-MpPerformanceReport -Path $etlPath -TopFiles:10 -TopExtensions:10 -TopProcesses:10 -TopScans:10 -Overview
 
-            if ($PerformanceReport) {
-                # Collect all selected reports to open
-                $reportsToOpen = @()
-                $missingReports = @()
+                if ($PerformanceReport) {
+                    # Collect all selected reports to open
+                    $reportsToOpen = @()
+                    $missingReports = @()
 
-                if ($rdbOverview.IsChecked -eq $true) {
-                    if ($PerformanceReport.Overview) {
-                        # Process Overview data to convert PerfHints array to readable text
-                        $processedOverview = $PerformanceReport.Overview | Select-Object *, @{
-                            Name = 'PerfHintsText'
-                            Expression = {
-                                if ($_.PerfHints) {
-                                    ($_.PerfHints | ForEach-Object { $_.ToString() }) -join '; '
-                                } else {
-                                    'None'
+                    if ($rdbOverview.IsChecked -eq $true) {
+                        if ($PerformanceReport.Overview) {
+                            # Process Overview data to convert PerfHints array to readable text
+                            $processedOverview = $PerformanceReport.Overview | Select-Object *, @{
+                                Name       = 'PerfHintsText'
+                                Expression = {
+                                    if ($_.PerfHints) {
+                                        ($_.PerfHints | ForEach-Object { $_.ToString() }) -join '; '
+                                    } else {
+                                        'None'
+                                    }
                                 }
-                            }
-                        } | Select-Object * -ExcludeProperty PerfHints
+                            } | Select-Object * -ExcludeProperty PerfHints
 
-                        $reportsToOpen += @{Data = $processedOverview; Title = "Performance Report - Overview"}
-                    } else {
-                        $missingReports += "Overview"
+                            $reportsToOpen += @{Data = $processedOverview; Title = 'Performance Report - Overview' }
+                        } else {
+                            $missingReports += 'Overview'
+                        }
                     }
-                }
 
-                if ($rdbTopfiles.IsChecked -eq $true) {
-                    if ($PerformanceReport.TopFiles) {
-                        $reportsToOpen += @{Data = $PerformanceReport.TopFiles; Title = "Performance Report - Top Files Scans"}
-                    } else {
-                        $missingReports += "Top Files"
+                    if ($rdbTopfiles.IsChecked -eq $true) {
+                        if ($PerformanceReport.TopFiles) {
+                            $reportsToOpen += @{Data = $PerformanceReport.TopFiles; Title = 'Performance Report - Top Files Scans' }
+                        } else {
+                            $missingReports += 'Top Files'
+                        }
                     }
-                }
 
-                if ($rdbTopExtensions.IsChecked -eq $true) {
-                    if ($PerformanceReport.TopExtensions) {
-                        $reportsToOpen += @{Data = $PerformanceReport.TopExtensions; Title = "Performance Report - Top Extensions Scans"}
-                    } else {
-                        $missingReports += "Top Extensions"
+                    if ($rdbTopExtensions.IsChecked -eq $true) {
+                        if ($PerformanceReport.TopExtensions) {
+                            $reportsToOpen += @{Data = $PerformanceReport.TopExtensions; Title = 'Performance Report - Top Extensions Scans' }
+                        } else {
+                            $missingReports += 'Top Extensions'
+                        }
                     }
-                }
 
-                if ($rdbTopProcess.IsChecked -eq $true) {
-                    if ($PerformanceReport.TopProcesses) {
-                        $reportsToOpen += @{Data = $PerformanceReport.TopProcesses; Title = "Performance Report - Top Processes Scans"}
-                    } else {
-                        $missingReports += "Top Processes"
+                    if ($rdbTopProcess.IsChecked -eq $true) {
+                        if ($PerformanceReport.TopProcesses) {
+                            $reportsToOpen += @{Data = $PerformanceReport.TopProcesses; Title = 'Performance Report - Top Processes Scans' }
+                        } else {
+                            $missingReports += 'Top Processes'
+                        }
                     }
-                }
 
-                if ($rdbTopScans.IsChecked -eq $true) {
-                    if ($PerformanceReport.TopScans) {
-                        $reportsToOpen += @{Data = $PerformanceReport.TopScans; Title = "Performance Report - Top Scans"}
-                    } else {
-                        $missingReports += "Top Scans"
+                    if ($rdbTopScans.IsChecked -eq $true) {
+                        if ($PerformanceReport.TopScans) {
+                            $reportsToOpen += @{Data = $PerformanceReport.TopScans; Title = 'Performance Report - Top Scans' }
+                        } else {
+                            $missingReports += 'Top Scans'
+                        }
                     }
-                }
 
-                # Open all windows using runspaces to display them simultaneously
-                foreach ($report in $reportsToOpen) {
-                    $runspace = [runspacefactory]::CreateRunspace()
-                    $runspace.ApartmentState = "STA"
-                    $runspace.ThreadOptions = "ReuseThread"
-                    $runspace.Open()
+                    # Open all windows using runspaces to display them simultaneously
+                    foreach ($report in $reportsToOpen) {
+                        $runspace = [runspacefactory]::CreateRunspace()
+                        $runspace.ApartmentState = 'STA'
+                        $runspace.ThreadOptions = 'ReuseThread'
+                        $runspace.Open()
 
-                    $powershell = [powershell]::Create()
-                    $powershell.Runspace = $runspace
+                        $powershell = [powershell]::Create()
+                        $powershell.Runspace = $runspace
 
-                    [void]$powershell.AddScript({
-                        param($reportData, $reportTitle)
+                        [void]$powershell.AddScript({
+                                param($reportData, $reportTitle)
 
-                        Add-Type -AssemblyName PresentationFramework
+                                Add-Type -AssemblyName PresentationFramework
 
-                        $perfXaml = @"
+                                $perfXaml = @"
 <Window
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -2647,298 +2768,313 @@ $btnShowPerformanceReport.Add_Click({
 </Window>
 "@
 
-                        $perfReader = (New-Object System.Xml.XmlNodeReader ([xml]$perfXaml))
-                        $perfWindow = [Windows.Markup.XamlReader]::Load($perfReader)
+                                $perfReader = (New-Object System.Xml.XmlNodeReader ([xml]$perfXaml))
+                                $perfWindow = [Windows.Markup.XamlReader]::Load($perfReader)
 
-                        $dgPerformance = $perfWindow.FindName("dgPerformance")
-                        $txtPerfCount = $perfWindow.FindName("txtPerfCount")
+                                $dgPerformance = $perfWindow.FindName('dgPerformance')
+                                $txtPerfCount = $perfWindow.FindName('txtPerfCount')
 
-                        $dataArray = @()
-                        if ($reportData -is [Array]) {
-                            $dataArray = $reportData
-                        } else {
-                            $dataArray = @($reportData)
-                        }
+                                $dataArray = @()
+                                if ($reportData -is [Array]) {
+                                    $dataArray = $reportData
+                                } else {
+                                    $dataArray = @($reportData)
+                                }
 
-                        # Add event handler to enable text wrapping for PerfHintsText column
-                        $dgPerformance.Add_AutoGeneratingColumn({
-                            param($sender, $e)
-                            if ($e.PropertyName -eq "PerfHintsText") {
-                                $e.Column.Width = 400
-                                $style = New-Object System.Windows.Style([System.Windows.Controls.TextBlock])
-                                $style.Setters.Add((New-Object System.Windows.Setter([System.Windows.Controls.TextBlock]::TextWrappingProperty, [System.Windows.TextWrapping]::Wrap)))
-                                $style.Setters.Add((New-Object System.Windows.Setter([System.Windows.Controls.TextBlock]::PaddingProperty, (New-Object System.Windows.Thickness(5)))))
-                                $e.Column.ElementStyle = $style
-                            }
-                        })
+                                # Add event handler to enable text wrapping for PerfHintsText column
+                                $dgPerformance.Add_AutoGeneratingColumn({
+                                        param($sender, $e)
+                                        if ($e.PropertyName -eq 'PerfHintsText') {
+                                            $e.Column.Width = 400
+                                            $style = New-Object System.Windows.Style([System.Windows.Controls.TextBlock])
+                                            $style.Setters.Add((New-Object System.Windows.Setter([System.Windows.Controls.TextBlock]::TextWrappingProperty, [System.Windows.TextWrapping]::Wrap)))
+                                            $style.Setters.Add((New-Object System.Windows.Setter([System.Windows.Controls.TextBlock]::PaddingProperty, (New-Object System.Windows.Thickness(5)))))
+                                            $e.Column.ElementStyle = $style
+                                        }
+                                    })
 
-                        $dgPerformance.ItemsSource = $dataArray
-                        $txtPerfCount.Text = "Showing $($dataArray.Count) items"
+                                $dgPerformance.ItemsSource = $dataArray
+                                $txtPerfCount.Text = "Showing $($dataArray.Count) items"
 
-                        $perfWindow.ShowDialog() | Out-Null
+                                $perfWindow.ShowDialog() | Out-Null
 
-                    }).AddArgument($report.Data).AddArgument($report.Title)
+                            }).AddArgument($report.Data).AddArgument($report.Title)
 
-                    $powershell.BeginInvoke()
-                    Start-Sleep -Milliseconds 200
-                }
+                        $powershell.BeginInvoke()
+                        Start-Sleep -Milliseconds 200
+                    }
 
-                # Show warning if any reports are missing
-                if ($missingReports.Count -gt 0) {
-                    [System.Windows.MessageBox]::Show("The following reports had no data: $($missingReports -join ', '). Please run the performance recording for a longer time!", 'Missing Data', 'OK', 'Warning')
+                    # Show warning if any reports are missing
+                    if ($missingReports.Count -gt 0) {
+                        [System.Windows.MessageBox]::Show("The following reports had no data: $($missingReports -join ', '). Please run the performance recording for a longer time!", 'Missing Data', 'OK', 'Warning')
+                    }
+                } else {
+                    [System.Windows.MessageBox]::Show('Performance report is empty... please run again for a longer time!')
                 }
             } else {
-                [System.Windows.MessageBox]::Show("Performance report is empty... please run again for a longer time!")
+                [System.Windows.MessageBox]::Show("ETL file not found: $etlPath", 'File Not Found', 'OK', 'Error')
             }
-        } else {
-            [System.Windows.MessageBox]::Show("ETL file not found: $etlPath", 'File Not Found', 'OK', 'Error')
-        }
 
-        $MainWindow1.Cursor = [System.Windows.Input.Cursors]::Arrow
-    }
-    catch {
-        $MainWindow1.Cursor = [System.Windows.Input.Cursors]::Arrow
-        [System.Windows.MessageBox]::Show($Error[0], 'Error', 'OK', 'Error')
-    }
-})
+            $MainWindow1.Cursor = [System.Windows.Input.Cursors]::Arrow
+        } catch {
+            $MainWindow1.Cursor = [System.Windows.Input.Cursors]::Arrow
+            [System.Windows.MessageBox]::Show($Error[0], 'Error', 'OK', 'Error')
+        }
+    })
 
 $btnExclusions.Add_Click({
-    $MainWindow1.Cursor = [System.Windows.Input.Cursors]::Wait
-    try {
-        $MPpreference = Get-MpPreference
-        $ExclusionList = @()
+        $MainWindow1.Cursor = [System.Windows.Input.Cursors]::Wait
+        try {
+            $MPpreference = Get-MpPreference
+            $ExclusionList = @()
 
-        # Add Path exclusions
-        if ($MPpreference.ExclusionPath) {
-            foreach ($path in $MPpreference.ExclusionPath) {
-                $ExclusionList += [PSCustomObject]@{ Type = "Path"; Value = $path }
-            }
-        }
-
-        # Add Extension exclusions
-        if ($MPpreference.ExclusionExtension) {
-            foreach ($ext in $MPpreference.ExclusionExtension) {
-                $ExclusionList += [PSCustomObject]@{ Type = "Extension"; Value = $ext }
-            }
-        }
-
-        # Add Process exclusions
-        if ($MPpreference.ExclusionProcess) {
-            foreach ($proc in $MPpreference.ExclusionProcess) {
-                $ExclusionList += [PSCustomObject]@{ Type = "Process"; Value = $proc }
-            }
-        }
-
-        # Add IP Address exclusions
-        if ($MPpreference.ExclusionIpAddress) {
-            foreach ($ip in $MPpreference.ExclusionIpAddress) {
-                $ExclusionList += [PSCustomObject]@{ Type = "IP Address"; Value = $ip }
-            }
-        }
-
-        $MainWindow1.Cursor = [System.Windows.Input.Cursors]::Arrow
-
-        if ($ExclusionList.Count -gt 0) {
-            Show-ExclusionsWindow -ExclusionData $ExclusionList
-        } else {
-            [System.Windows.MessageBox]::Show("No Defender AV exclusions found!", 'Exclusions', 'OK', 'Information')
-        }
-    }
-    catch {
-        $MainWindow1.Cursor = [System.Windows.Input.Cursors]::Arrow
-        [System.Windows.MessageBox]::Show($Error[0], 'Error', 'OK', 'Error')
-    }
-})
-
-$btnRunPerformance.Add_Click({
-    PerformanceAnalyze
-})
-
-$btnShowEstimatedImpact.Add_Click({
-    $MainWindow1.Cursor = [System.Windows.Input.Cursors]::Wait
-    try {
-        # Find the most recent MPlog file in the Support directory
-        $supportPath = "C:\ProgramData\Microsoft\Windows Defender\Support"
-
-        if (-not (Test-Path $supportPath)) {
-            [System.Windows.MessageBox]::Show("Support directory not found: $supportPath", 'Directory Not Found', 'OK', 'Warning')
-            $MainWindow1.Cursor = [System.Windows.Input.Cursors]::Arrow
-            return
-        }
-
-        $mplogFiles = Get-ChildItem -Path $supportPath -Filter "MPLog-*.log" -ErrorAction SilentlyContinue | Sort-Object LastWriteTime -Descending
-
-        if ($mplogFiles.Count -eq 0) {
-            [System.Windows.MessageBox]::Show("No MPlog files found in $supportPath", 'No Files Found', 'OK', 'Warning')
-            $MainWindow1.Cursor = [System.Windows.Input.Cursors]::Arrow
-            return
-        }
-
-        # Use the most recent MPlog file
-        $mplogFile = $mplogFiles[0]
-
-        # Read the file and filter lines containing "EstimatedImpact"
-        $estimatedImpactLines = Get-Content -Path $mplogFile.FullName | Where-Object { $_ -match "EstimatedImpact" }
-
-        if ($estimatedImpactLines.Count -eq 0) {
-            [System.Windows.MessageBox]::Show("No 'EstimatedImpact' entries found in $($mplogFile.Name)", 'No Data Found', 'OK', 'Information')
-            $MainWindow1.Cursor = [System.Windows.Input.Cursors]::Arrow
-            return
-        }
-
-        # Parse the log lines into objects for better display
-        $impactData = @()
-        foreach ($line in $estimatedImpactLines) {
-            $timestamp = "N/A"
-            $message = $line
-            $impactValue = 0
-            $path = ""
-
-            # Try to parse timestamp and message
-            if ($line -match '^(\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d+Z)\s+(.+)$') {
-                $timestamp = $matches[1]
-                $message = $matches[2]
-            }
-
-            # Try to extract EstimatedImpact value (e.g., EstimatedImpact: 123)
-            if ($message -match 'EstimatedImpact[:\s]+(\d+)') {
-                $impactValue = [int]$matches[1]
-            }
-
-            # Try to extract file path from the message
-            if ($message -match 'Path:\s*([^,\s]+)') {
-                $path = $matches[1]
-            } elseif ($message -match '\\\\[^,\s]+') {
-                $path = $matches[0]
-            }
-
-            $impactData += [PSCustomObject]@{
-                EstimatedImpact = $impactValue
-                Path = $path
-                Timestamp = $timestamp
-                FullMessage = $message
-            }
-        }
-
-        # Sort by EstimatedImpact descending (highest first)
-        $impactData = $impactData | Sort-Object -Property EstimatedImpact -Descending
-
-        $MainWindow1.Cursor = [System.Windows.Input.Cursors]::Arrow
-        Show-EstimatedImpactWindow -ImpactData $impactData
-    }
-    catch {
-        $MainWindow1.Cursor = [System.Windows.Input.Cursors]::Arrow
-        [System.Windows.MessageBox]::Show($Error[0], 'Error', 'OK', 'Error')
-    }
-})
-
-$btnShowFirewallRules.Add_Click({
-    $MainWindow1.Cursor = [System.Windows.Input.Cursors]::Wait
-    try {
-        # Get all rules first
-        $Rules = Get-NetFirewallRule -ErrorAction Stop
-
-        # Get all port filters and application filters in bulk
-        $PortFilters = Get-NetFirewallPortFilter -All -ErrorAction SilentlyContinue
-        $AppFilters = Get-NetFirewallApplicationFilter -All -ErrorAction SilentlyContinue
-
-        # Create hashtables for fast lookup
-        $PortFilterHash = @{}
-        foreach ($pf in $PortFilters) {
-            $PortFilterHash[$pf.InstanceID] = $pf
-        }
-
-        $AppFilterHash = @{}
-        foreach ($af in $AppFilters) {
-            $AppFilterHash[$af.InstanceID] = $af
-        }
-
-        # Build the results
-        $FirewallRules = foreach ($rule in $Rules) {
-            $portFilter = $PortFilterHash[$rule.InstanceID]
-            $appFilter = $AppFilterHash[$rule.InstanceID]
-
-            [PSCustomObject]@{
-                DisplayName = $rule.DisplayName
-                Enabled     = $rule.Enabled
-                Direction   = $rule.Direction
-                Action      = $rule.Action
-                Profile     = $rule.Profile
-                Protocol    = if ($portFilter) { $portFilter.Protocol } else { "Any" }
-                LocalPort   = if ($portFilter -and $portFilter.LocalPort) { $portFilter.LocalPort -join ", " } else { "Any" }
-                RemotePort  = if ($portFilter -and $portFilter.RemotePort) { $portFilter.RemotePort -join ", " } else { "Any" }
-                Program     = if ($appFilter -and $appFilter.Program) { $appFilter.Program } else { "Any" }
-            }
-        }
-
-        $MainWindow1.Cursor = [System.Windows.Input.Cursors]::Arrow
-
-        if ($FirewallRules) {
-            Show-FirewallRulesWindow -RulesData $FirewallRules
-        } else {
-            [System.Windows.MessageBox]::Show("No firewall rules found.", 'Firewall Rules', 'OK', 'Information')
-        }
-    }
-    catch {
-        $MainWindow1.Cursor = [System.Windows.Input.Cursors]::Arrow
-        [System.Windows.MessageBox]::Show($Error[0], 'Error', 'OK', 'Error')
-    }
-})
-
-$btnShowFirewallLogs.Add_Click({
-    $MainWindow1.Cursor = [System.Windows.Input.Cursors]::Wait
-    try {
-        $logPath = "C:\Windows\System32\LogFiles\Firewall\pfirewall.log"
-
-        if (-not (Test-Path $logPath)) {
-            $MainWindow1.Cursor = [System.Windows.Input.Cursors]::Arrow
-            [System.Windows.MessageBox]::Show(
-                "Firewall log file not found at:`n$logPath`n`nTo enable firewall logging, open Windows Defender Firewall with Advanced Security > Properties > select a profile > Logging > Customize, then set 'Log dropped packets' and/or 'Log successful connections' to Yes.",
-                'Firewall Logging Not Enabled', 'OK', 'Warning')
-            return
-        }
-
-        # Read log file — skip comment lines starting with #
-        $rawLines = Get-Content -Path $logPath -ErrorAction Stop | Where-Object { $_ -notmatch '^#' -and $_.Trim() -ne '' }
-
-        if ($rawLines.Count -eq 0) {
-            $MainWindow1.Cursor = [System.Windows.Input.Cursors]::Arrow
-            [System.Windows.MessageBox]::Show("Firewall log file exists but contains no entries yet. Make sure logging is enabled and some traffic has occurred.", 'No Log Entries', 'OK', 'Information')
-            return
-        }
-
-        # Fields: date time action protocol src-ip dst-ip src-port dst-port size tcpflags tcpsyn tcpack tcpwin icmptype icmpcode info path
-        $logData = foreach ($line in $rawLines) {
-            $parts = $line -split ' '
-            if ($parts.Count -ge 16) {
-                [PSCustomObject]@{
-                    DateTime = "$($parts[0]) $($parts[1])"
-                    Action   = $parts[2]
-                    Protocol = $parts[3]
-                    SrcIP    = $parts[4]
-                    DstIP    = $parts[5]
-                    SrcPort  = $parts[6]
-                    DstPort  = $parts[7]
-                    Size     = $parts[8]
-                    Info     = $parts[15]
-                    Path     = if ($parts.Count -ge 17) { $parts[16] } else { "-" }
+            # Add Path exclusions
+            if ($MPpreference.ExclusionPath) {
+                foreach ($path in $MPpreference.ExclusionPath) {
+                    $ExclusionList += [PSCustomObject]@{ Type = 'Path'; Value = $path }
                 }
             }
-        }
 
-        $MainWindow1.Cursor = [System.Windows.Input.Cursors]::Arrow
+            # Add Extension exclusions
+            if ($MPpreference.ExclusionExtension) {
+                foreach ($ext in $MPpreference.ExclusionExtension) {
+                    $ExclusionList += [PSCustomObject]@{ Type = 'Extension'; Value = $ext }
+                }
+            }
 
-        if ($logData) {
-            Show-FirewallLogsWindow -LogData $logData
-        } else {
-            [System.Windows.MessageBox]::Show("Could not parse any entries from the firewall log.", 'Parse Error', 'OK', 'Warning')
+            # Add Process exclusions
+            if ($MPpreference.ExclusionProcess) {
+                foreach ($proc in $MPpreference.ExclusionProcess) {
+                    $ExclusionList += [PSCustomObject]@{ Type = 'Process'; Value = $proc }
+                }
+            }
+
+            # Add IP Address exclusions
+            if ($MPpreference.ExclusionIpAddress) {
+                foreach ($ip in $MPpreference.ExclusionIpAddress) {
+                    $ExclusionList += [PSCustomObject]@{ Type = 'IP Address'; Value = $ip }
+                }
+            }
+
+            $MainWindow1.Cursor = [System.Windows.Input.Cursors]::Arrow
+
+            if ($ExclusionList.Count -gt 0) {
+                Show-ExclusionsWindow -ExclusionData $ExclusionList
+            } else {
+                [System.Windows.MessageBox]::Show('No Defender AV exclusions found!', 'Exclusions', 'OK', 'Information')
+            }
+        } catch {
+            $MainWindow1.Cursor = [System.Windows.Input.Cursors]::Arrow
+            [System.Windows.MessageBox]::Show($Error[0], 'Error', 'OK', 'Error')
         }
-    }
-    catch {
-        $MainWindow1.Cursor = [System.Windows.Input.Cursors]::Arrow
-        [System.Windows.MessageBox]::Show($Error[0], 'Error', 'OK', 'Error')
-    }
-})
+    })
+
+$btnRunPerformance.Add_Click({
+        PerformanceAnalyze
+    })
+
+$btnShowEstimatedImpact.Add_Click({
+        $MainWindow1.Cursor = [System.Windows.Input.Cursors]::Wait
+        try {
+            # Find the most recent MPlog file in the Support directory
+            $supportPath = 'C:\ProgramData\Microsoft\Windows Defender\Support'
+
+            if (-not (Test-Path $supportPath)) {
+                [System.Windows.MessageBox]::Show("Support directory not found: $supportPath", 'Directory Not Found', 'OK', 'Warning')
+                $MainWindow1.Cursor = [System.Windows.Input.Cursors]::Arrow
+                return
+            }
+
+            $mplogFiles = Get-ChildItem -Path $supportPath -Filter 'MPLog-*.log' -ErrorAction SilentlyContinue | Sort-Object LastWriteTime -Descending
+
+            if ($mplogFiles.Count -eq 0) {
+                [System.Windows.MessageBox]::Show("No MPlog files found in $supportPath", 'No Files Found', 'OK', 'Warning')
+                $MainWindow1.Cursor = [System.Windows.Input.Cursors]::Arrow
+                return
+            }
+
+            # Use the most recent MPlog file
+            $mplogFile = $mplogFiles[0]
+
+            # Read the file and filter lines containing "EstimatedImpact"
+            $estimatedImpactLines = Get-Content -Path $mplogFile.FullName | Where-Object { $_ -match 'EstimatedImpact' }
+
+            if ($estimatedImpactLines.Count -eq 0) {
+                [System.Windows.MessageBox]::Show("No 'EstimatedImpact' entries found in $($mplogFile.Name)", 'No Data Found', 'OK', 'Information')
+                $MainWindow1.Cursor = [System.Windows.Input.Cursors]::Arrow
+                return
+            }
+
+            # Parse the log lines into objects for better display
+            $impactData = @()
+            foreach ($line in $estimatedImpactLines) {
+                $timestamp = 'N/A'
+                $message = $line
+                $impactValue = 0
+                $path = ''
+
+                # Try to parse timestamp and message
+                if ($line -match '^(\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d+Z)\s+(.+)$') {
+                    $timestamp = $matches[1]
+                    $message = $matches[2]
+                }
+
+                # Try to extract EstimatedImpact value (e.g., EstimatedImpact: 123)
+                if ($message -match 'EstimatedImpact[:\s]+(\d+)') {
+                    $impactValue = [int]$matches[1]
+                }
+
+                # Try to extract file path from the message
+                if ($message -match 'Path:\s*([^,\s]+)') {
+                    $path = $matches[1]
+                } elseif ($message -match '\\\\[^,\s]+') {
+                    $path = $matches[0]
+                }
+
+                $impactData += [PSCustomObject]@{
+                    EstimatedImpact = $impactValue
+                    Path            = $path
+                    Timestamp       = $timestamp
+                    FullMessage     = $message
+                }
+            }
+
+            # Sort by EstimatedImpact descending (highest first)
+            $impactData = $impactData | Sort-Object -Property EstimatedImpact -Descending
+
+            $MainWindow1.Cursor = [System.Windows.Input.Cursors]::Arrow
+            Show-EstimatedImpactWindow -ImpactData $impactData
+        } catch {
+            $MainWindow1.Cursor = [System.Windows.Input.Cursors]::Arrow
+            [System.Windows.MessageBox]::Show($Error[0], 'Error', 'OK', 'Error')
+        }
+    })
+
+$btnShowFirewallRules.Add_Click({
+        $MainWindow1.Cursor = [System.Windows.Input.Cursors]::Wait
+        try {
+            # Get all rules first
+            $Rules = Get-NetFirewallRule -ErrorAction Stop
+
+            # Get all port filters and application filters in bulk
+            $PortFilters = Get-NetFirewallPortFilter -All -ErrorAction SilentlyContinue
+            $AppFilters = Get-NetFirewallApplicationFilter -All -ErrorAction SilentlyContinue
+
+            # Create hashtables for fast lookup
+            $PortFilterHash = @{}
+            foreach ($pf in $PortFilters) {
+                $PortFilterHash[$pf.InstanceID] = $pf
+            }
+
+            $AppFilterHash = @{}
+            foreach ($af in $AppFilters) {
+                $AppFilterHash[$af.InstanceID] = $af
+            }
+
+            # Build the results
+            $FirewallRules = foreach ($rule in $Rules) {
+                $portFilter = $PortFilterHash[$rule.InstanceID]
+                $appFilter = $AppFilterHash[$rule.InstanceID]
+
+                [PSCustomObject]@{
+                    DisplayName = $rule.DisplayName
+                    Enabled     = $rule.Enabled
+                    Direction   = $rule.Direction
+                    Action      = $rule.Action
+                    Profile     = $rule.Profile
+                    Protocol    = if ($portFilter) {
+                        $portFilter.Protocol 
+                    } else {
+                        'Any' 
+                    }
+                    LocalPort   = if ($portFilter -and $portFilter.LocalPort) {
+                        $portFilter.LocalPort -join ', ' 
+                    } else {
+                        'Any' 
+                    }
+                    RemotePort  = if ($portFilter -and $portFilter.RemotePort) {
+                        $portFilter.RemotePort -join ', ' 
+                    } else {
+                        'Any' 
+                    }
+                    Program     = if ($appFilter -and $appFilter.Program) {
+                        $appFilter.Program 
+                    } else {
+                        'Any' 
+                    }
+                }
+            }
+
+            $MainWindow1.Cursor = [System.Windows.Input.Cursors]::Arrow
+
+            if ($FirewallRules) {
+                Show-FirewallRulesWindow -RulesData $FirewallRules
+            } else {
+                [System.Windows.MessageBox]::Show('No firewall rules found.', 'Firewall Rules', 'OK', 'Information')
+            }
+        } catch {
+            $MainWindow1.Cursor = [System.Windows.Input.Cursors]::Arrow
+            [System.Windows.MessageBox]::Show($Error[0], 'Error', 'OK', 'Error')
+        }
+    })
+
+$btnShowFirewallLogs.Add_Click({
+        $MainWindow1.Cursor = [System.Windows.Input.Cursors]::Wait
+        try {
+            $logPath = 'C:\Windows\System32\LogFiles\Firewall\pfirewall.log'
+
+            if (-not (Test-Path $logPath)) {
+                $MainWindow1.Cursor = [System.Windows.Input.Cursors]::Arrow
+                [System.Windows.MessageBox]::Show(
+                    "Firewall log file not found at:`n$logPath`n`nTo enable firewall logging, open Windows Defender Firewall with Advanced Security > Properties > select a profile > Logging > Customize, then set 'Log dropped packets' and/or 'Log successful connections' to Yes.",
+                    'Firewall Logging Not Enabled', 'OK', 'Warning')
+                return
+            }
+
+            # Read log file — skip comment lines starting with #
+            $rawLines = Get-Content -Path $logPath -ErrorAction Stop | Where-Object { $_ -notmatch '^#' -and $_.Trim() -ne '' }
+
+            if ($rawLines.Count -eq 0) {
+                $MainWindow1.Cursor = [System.Windows.Input.Cursors]::Arrow
+                [System.Windows.MessageBox]::Show('Firewall log file exists but contains no entries yet. Make sure logging is enabled and some traffic has occurred.', 'No Log Entries', 'OK', 'Information')
+                return
+            }
+
+            # Fields: date time action protocol src-ip dst-ip src-port dst-port size tcpflags tcpsyn tcpack tcpwin icmptype icmpcode info path
+            $logData = foreach ($line in $rawLines) {
+                $parts = $line -split ' '
+                if ($parts.Count -ge 16) {
+                    [PSCustomObject]@{
+                        DateTime = "$($parts[0]) $($parts[1])"
+                        Action   = $parts[2]
+                        Protocol = $parts[3]
+                        SrcIP    = $parts[4]
+                        DstIP    = $parts[5]
+                        SrcPort  = $parts[6]
+                        DstPort  = $parts[7]
+                        Size     = $parts[8]
+                        Info     = $parts[15]
+                        Path     = if ($parts.Count -ge 17) {
+                            $parts[16] 
+                        } else {
+                            '-' 
+                        }
+                    }
+                }
+            }
+
+            $MainWindow1.Cursor = [System.Windows.Input.Cursors]::Arrow
+
+            if ($logData) {
+                Show-FirewallLogsWindow -LogData $logData
+            } else {
+                [System.Windows.MessageBox]::Show('Could not parse any entries from the firewall log.', 'Parse Error', 'OK', 'Warning')
+            }
+        } catch {
+            $MainWindow1.Cursor = [System.Windows.Input.Cursors]::Arrow
+            [System.Windows.MessageBox]::Show($Error[0], 'Error', 'OK', 'Error')
+        }
+    })
 
 # Show Form
 $Form.ShowDialog() | Out-Null
