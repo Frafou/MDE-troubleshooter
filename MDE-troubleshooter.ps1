@@ -1,24 +1,66 @@
-# Author: Thomas Verheyden
-# New release: 11.03.2026
-# Version: 3.1
-# Blogpost: https://vertho.tech/2023/06/30/tool-mde-troubleshooter-is-born/
-# Website: vertho.tech
-# Twitter: @thomasvrhydn
-# Disclaimer: Script provided as is. Use at own risk. No guarantees or warranty provided.
-
 <#
-README:
-This tool is designed to assist you in analyzing issues related to Defender for Endpoint on your local endpoint.
-It offers a centralized view of the security configuration, log files, updates, and provides access to the Performance Analyzer.
+.SYNOPSIS
+    MDE Troubleshooter - Comprehensive Microsoft Defender for Endpoint Diagnostic Tool
+
+.DESCRIPTION
+    A powerful GUI-based diagnostic utility for troubleshooting Microsoft Defender for Endpoint (MDE) issues on local endpoints.
+    Provides centralized access to security configuration, threat monitoring, log analysis, update status, and performance diagnostics.
+
+    Key Features:
+    - Real-time MDE security status and configuration verification
+    - Event log analysis and diagnostics
+    - Service health and status monitoring
+    - Windows Update tracking
+    - Performance Analyzer integration
+    - Threat and vulnerability assessment
+    - Interactive WPF-based user interface
+
+.PARAMETER None
+    This script does not accept command-line parameters. Launch interactively via GUI.
+
+.EXAMPLE
+    .\MDE-troubleshooter.ps1
+    Launches the MDE Troubleshooter GUI application
+
+.REQUIREMENTS
+    - Operating System: Windows 10 or later, Windows Server 2016 or later
+    - PowerShell: Version 5.0 or later
+    - Privileges: Administrator rights required
+    - Dependencies: Microsoft Defender for Endpoint installed and running, WPF support
+
+.NOTES
+    Author:          Thomas Verheyden
+    Email:           contact@vertho.tech
+    Twitter:         @thomasvrhydn
+    Version:         3.1
+    Release Date:    March 11, 2026
+    Website:         https://vertho.tech
+    GitHub:          https://github.com/v3rtho/MDE-troubleshooter
+    Blog:            https://vertho.tech/2023/06/30/tool-mde-troubleshooter-is-born/
+
+.DISCLAIMER
+    This script is provided "AS-IS" without warranties, guarantees, or support. The author assumes no liability for any
+    damages or data loss resulting from the use of this script. Always test in a non-production environment first.
+    Use at your own risk and discretion.
+
+.VERSION HISTORY
+    3.1  - 2026-03-11  - Enhanced UI/UX improvements, performance optimizations
+    3.0  - PreviousDate - Major redesign with WPF interface and expanded diagnostics
+    2.x  - Earlier      - Console-based diagnostic version
+
+.LINKS
+    GitHub Repository: https://github.com/v3rtho/MDE-troubleshooter
+    Author Website:    https://vertho.tech
+    Twitter:           https://twitter.com/thomasvrhydn
 #>
 
-[void][System.Reflection.Assembly]::LoadWithPartialName('presentationframework')  
+[void][System.Reflection.Assembly]::LoadWithPartialName('presentationframework')
 [xml]$xaml = @"
-<Window 
+<Window
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     Title="MDE Troubleshooter v3.0" Height="700" Width="1000" WindowStyle="ToolWindow" ResizeMode="NoResize" Background="#F5F5F5">
-    
+
     <Window.Resources>
         <Style x:Key="MenuButton" TargetType="Button">
             <Setter Property="Background" Value="Transparent"/>
@@ -81,13 +123,13 @@ It offers a centralized view of the security configuration, log files, updates, 
             <Setter Property="Background" Value="White"/>
         </Style>
     </Window.Resources>
-    
+
     <Grid Name="MainWindow1">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="200"/>
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
-        
+
         <!-- Left Side Menu -->
         <Border Grid.Column="0" Background="#2D2D44">
             <Grid>
@@ -114,14 +156,14 @@ It offers a centralized view of the security configuration, log files, updates, 
                 </StackPanel>
             </Grid>
         </Border>
-        
+
         <!-- Main Content Area -->
         <Grid Grid.Column="1">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
-            
+
             <!-- Header -->
             <Border Grid.Row="0" Background="#2D2D44" Padding="15,10">
                 <Grid>
@@ -138,10 +180,10 @@ It offers a centralized view of the security configuration, log files, updates, 
                     </StackPanel>
                 </Grid>
             </Border>
-            
+
             <!-- Content Panels -->
             <Grid Grid.Row="1">
-                
+
                 <!-- Panel 1: Defender AV -->
                 <ScrollViewer Name="panelDefenderAV" VerticalScrollBarVisibility="Auto" Visibility="Visible">
                     <Grid Margin="10">
@@ -155,7 +197,7 @@ It offers a centralized view of the security configuration, log files, updates, 
                             <RowDefinition Height="Auto"/>
                             <RowDefinition Height="Auto"/>
                         </Grid.RowDefinitions>
-                        
+
                         <!-- Version Information -->
                         <Border Grid.Column="0" Grid.Row="0" Style="{StaticResource SectionBorder}">
                             <StackPanel>
@@ -178,7 +220,7 @@ It offers a centralized view of the security configuration, log files, updates, 
                                 </Grid>
                             </StackPanel>
                         </Border>
-                        
+
                         <!-- Service Status -->
                         <Border Grid.Column="1" Grid.Row="0" Style="{StaticResource SectionBorder}">
                             <StackPanel>
@@ -201,7 +243,7 @@ It offers a centralized view of the security configuration, log files, updates, 
                                 </Grid>
                             </StackPanel>
                         </Border>
-                        
+
                         <!-- Real-Time Protection -->
                         <Border Grid.Column="0" Grid.Row="1" Style="{StaticResource SectionBorder}">
                             <StackPanel>
@@ -224,7 +266,7 @@ It offers a centralized view of the security configuration, log files, updates, 
                                 </Grid>
                             </StackPanel>
                         </Border>
-                        
+
                         <!-- Scan Information -->
                         <Border Grid.Column="1" Grid.Row="1" Style="{StaticResource SectionBorder}">
                             <StackPanel>
@@ -247,7 +289,7 @@ It offers a centralized view of the security configuration, log files, updates, 
                                 </Grid>
                             </StackPanel>
                         </Border>
-                        
+
                         <!-- Protection Settings -->
                         <Border Grid.Column="0" Grid.Row="2" Style="{StaticResource SectionBorder}">
                             <StackPanel>
@@ -270,7 +312,7 @@ It offers a centralized view of the security configuration, log files, updates, 
                                 </Grid>
                             </StackPanel>
                         </Border>
-                        
+
                         <!-- Additional Info -->
                         <Border Grid.Column="1" Grid.Row="2" Style="{StaticResource SectionBorder}">
                             <StackPanel>
@@ -289,7 +331,7 @@ It offers a centralized view of the security configuration, log files, updates, 
                         </Border>
                     </Grid>
                 </ScrollViewer>
-                
+
                 <!-- Panel 2: Attack Surface Reduction -->
                 <Grid Name="panelASR" Margin="10" Visibility="Collapsed">
                     <Grid.RowDefinitions>
@@ -331,7 +373,7 @@ It offers a centralized view of the security configuration, log files, updates, 
                         </StackPanel>
                     </Border>
                 </Grid>
-                
+
                 <!-- Panel 3: Exclusions -->
                 <Grid Name="panelExclusions" Margin="10" Visibility="Collapsed">
                     <Grid.RowDefinitions>
@@ -377,13 +419,13 @@ It offers a centralized view of the security configuration, log files, updates, 
                         </StackPanel>
                     </Border>
                 </Grid>
-                
+
                 <!-- Panel 4: Updates -->
                 <ScrollViewer Name="panelUpdates" VerticalScrollBarVisibility="Auto" Visibility="Collapsed">
                     <Grid Margin="10">
                         <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
                         <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
-                        
+
                         <Border Grid.Column="0" Grid.Row="0" Style="{StaticResource SectionBorder}">
                             <StackPanel>
                                 <Label Content="Current Signature Information" FontSize="14" FontWeight="Bold" Foreground="#2D2D44" Margin="0,0,0,10"/>
@@ -405,7 +447,7 @@ It offers a centralized view of the security configuration, log files, updates, 
                                 </Grid>
                             </StackPanel>
                         </Border>
-                        
+
                         <Border Grid.Column="1" Grid.Row="0" Style="{StaticResource SectionBorder}">
                             <StackPanel>
                                 <Label Content="Latest Microsoft Versions" FontSize="14" FontWeight="Bold" Foreground="#2D2D44" Margin="0,0,0,10"/>
@@ -421,7 +463,7 @@ It offers a centralized view of the security configuration, log files, updates, 
                                 </Grid>
                             </StackPanel>
                         </Border>
-                        
+
                         <Border Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="1" Style="{StaticResource SectionBorder}">
                             <StackPanel>
                                 <Label Content="Update Actions" FontSize="14" FontWeight="Bold" Foreground="#2D2D44" Margin="0,0,0,10"/>
@@ -433,7 +475,7 @@ It offers a centralized view of the security configuration, log files, updates, 
                         </Border>
                     </Grid>
                 </ScrollViewer>
-                
+
                 <!-- Panel 3: Logs -->
                 <Grid Name="panelLogs" Margin="10" Visibility="Collapsed">
                     <Border Style="{StaticResource SectionBorder}">
@@ -448,7 +490,7 @@ It offers a centralized view of the security configuration, log files, updates, 
                         </StackPanel>
                     </Border>
                 </Grid>
-                
+
                 <!-- Panel 4: Performance -->
                 <ScrollViewer Name="panelPerformance" VerticalScrollBarVisibility="Auto" Visibility="Collapsed">
                     <Grid Margin="10">
@@ -495,7 +537,7 @@ It offers a centralized view of the security configuration, log files, updates, 
                         </Border>
                     </Grid>
                 </ScrollViewer>
-                
+
                 <!-- Panel 5: Proxy -->
                 <Grid Name="panelProxy" Margin="10" Visibility="Collapsed">
                     <Border Style="{StaticResource SectionBorder}">
@@ -514,13 +556,13 @@ It offers a centralized view of the security configuration, log files, updates, 
                         </StackPanel>
                     </Border>
                 </Grid>
-                
+
                 <!-- Panel 6: Firewall -->
                 <ScrollViewer Name="panelFirewall" VerticalScrollBarVisibility="Visible" Visibility="Collapsed">
                     <Grid Margin="10">
                         <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
                         <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
-                        
+
                         <Border Grid.Column="0" Grid.Row="0" Style="{StaticResource SectionBorder}">
                             <StackPanel>
                                 <Label Content="Domain Profile" FontSize="14" FontWeight="Bold" Foreground="#2D2D44" Margin="0,0,0,10"/>
@@ -538,7 +580,7 @@ It offers a centralized view of the security configuration, log files, updates, 
                                 </Grid>
                             </StackPanel>
                         </Border>
-                        
+
                         <Border Grid.Column="1" Grid.Row="0" Style="{StaticResource SectionBorder}">
                             <StackPanel>
                                 <Label Content="Private Profile" FontSize="14" FontWeight="Bold" Foreground="#2D2D44" Margin="0,0,0,10"/>
@@ -556,7 +598,7 @@ It offers a centralized view of the security configuration, log files, updates, 
                                 </Grid>
                             </StackPanel>
                         </Border>
-                        
+
                         <Border Grid.Column="0" Grid.Row="1" Style="{StaticResource SectionBorder}">
                             <StackPanel>
                                 <Label Content="Public Profile" FontSize="14" FontWeight="Bold" Foreground="#2D2D44" Margin="0,0,0,10"/>
@@ -574,7 +616,7 @@ It offers a centralized view of the security configuration, log files, updates, 
                                 </Grid>
                             </StackPanel>
                         </Border>
-                        
+
                         <Border Grid.Column="1" Grid.Row="1" Style="{StaticResource SectionBorder}">
                             <StackPanel>
                                 <Label Content="Firewall Rules" FontSize="14" FontWeight="Bold" Foreground="#2D2D44" Margin="0,0,0,10"/>
@@ -611,7 +653,7 @@ if (-not $isAdmin) {
 }
 
 # Read XAML
-$reader = (New-Object System.Xml.XmlNodeReader $xaml) 
+$reader = (New-Object System.Xml.XmlNodeReader $xaml)
 try { $Form = [Windows.Markup.XamlReader]::Load($reader) }
 catch { Write-Host "Unable to load Windows.Markup.XamlReader"; exit }
 
@@ -658,11 +700,11 @@ Function Convert-BoolValue {
 }
 
 Function GetASRRuleStatus {
-    try {    
+    try {
         $ASRs = @()
         $ASRValue = @()
         $asrrules = @()
-        
+
         $asrrules += [PSCustomObject]@{ Name = "Block executable content from email client and webmail"; GUID = "BE9BA2D9-53EA-4CDC-84E5-9B1EEEE46550" }
         $asrrules += [PSCustomObject]@{ Name = "Block all Office applications from creating child processes"; GUID = "D4F940AB-401B-4EFC-AADC-AD5F3C50688A" }
         $asrrules += [PSCustomObject]@{ Name = "Block Office applications from creating executable content"; GUID = "3B576869-A4EC-4529-8536-B80A7769E899" }
@@ -687,30 +729,30 @@ Function GetASRRuleStatus {
         $results = Get-MpPreference
 
         if (-not [string]::IsNullOrEmpty($results.AttackSurfaceReductionRules_ids)) {
-            foreach ($id in $asrrules.GUID) {      
+            foreach ($id in $asrrules.GUID) {
                 $index = [Array]::FindIndex($asrrules, [Predicate[object]]{ param($r) $r.GUID -eq $id })
                 if ($index -eq -1) { continue }
-                
+
                 $count = 0
                 foreach ($entry in $results.AttackSurfaceReductionRules_ids) {
                     if ($entry -match $id) {
-                        $enabled = $results.AttackSurfaceReductionRules_actions[$count]             
+                        $enabled = $results.AttackSurfaceReductionRules_actions[$count]
                         if ($enabled -in 0,1,2,6) {
                             $ASRs += $asrrules[$index].Name
                             $ASRValue += $enabledvalues[$enabled]
                         }
                     }
-                    $count++         
-                }    
+                    $count++
+                }
             }
 
             $Results = for ($i = 0; $i -lt $ASRs.Count; $i++) {
                 [PSCustomObject]@{
                     ASR    = $ASRs[$i]
-                    Status = $ASRValue[$i] 
+                    Status = $ASRValue[$i]
                 }
             }
-            return $Results 
+            return $Results
         }
         else {
             return "ASR rules empty"
@@ -941,9 +983,9 @@ Function GetPlatformVersionAndEngine {
         $PlatformURL = "https://www.microsoft.com/en-us/wdsi/defenderupdates?ranMID=24542&ranEAID=TnL5HPStwNw&ranSiteID=TnL5HPStwNw-ywv7diDw5Zx1d5vlZitDSQ&epi=TnL5HPStwNw-ywv7diDw5Zx1d5vlZitDSQ&irgwc=1&OCID=AID2000142_aff_7593_1243925&tduid=%28ir__cdyqnmiqgckftliekk0sohzjxn2xpksmaywdhgac00%29%287593%29%281243925%29%28TnL5HPStwNw-ywv7diDw5Zx1d5vlZitDSQ%29%28%29&irclickid=_cdyqnmiqgckftliekk0sohzjxn2xpksmaywdhgac00"
 
         $Platformwebsite = Invoke-WebRequest -Uri $PlatformURL -UseBasicParsing
-        $PlatformPattern = "<li>Platform Version: <span>(?<Platform>.*)</span></li>" 
+        $PlatformPattern = "<li>Platform Version: <span>(?<Platform>.*)</span></li>"
         $PlatformMatches = ($Platformwebsite | Select-String $PlatformPattern -AllMatches).Matches
-        
+
         $PlatformVersionList = foreach ($group in $PlatformMatches) {
             [PSCustomObject]@{
                 'Platform_Version' = ($group.Groups.Where{ $_.Name -like 'Platform' }).Value
@@ -974,14 +1016,14 @@ Function ReadHashComputation {
             return "Enabled by GPO"
         }
     }
-    
+
     if (Test-Path "HKLM:\Software\Microsoft\Windows Defender\MpEngine") {
         $KeyReadHashComputation = Get-ItemProperty -Path "HKLM:\Software\Microsoft\Windows Defender\MpEngine" -Name "EnableFileHashComputation" -ErrorAction SilentlyContinue
         if ($KeyReadHashComputation) {
             return "Enabled"
         }
     }
-    
+
     return "Disabled"
 }
 
@@ -997,7 +1039,7 @@ Function WindowLoader {
         $lblNISEngineVersion_txt.Content = $MPComputerstatus.NISEngineVersion
         $lblAMRunningMode_txt.Content = $MPComputerstatus.AMRunningMode
         $lblComputerState_txt.Content = $MPComputerstatus.ComputerState
-        
+
         # Service Status
         $lblAMServiceEnabled_txt.Content = $MPComputerstatus.AMServiceEnabled
         $lblAntivirusEnabled_txt.Content = $MPComputerstatus.AntivirusEnabled
@@ -1005,7 +1047,7 @@ Function WindowLoader {
         $lblNISEnabled_txt.Content = $MPComputerstatus.NISEnabled
         $lblIsVirtualMachine_txt.Content = $MPComputerstatus.IsVirtualMachine
         $lblComputerID_txt.Content = $MPComputerstatus.ComputerID
-        
+
         # Real-Time Protection
         $lblRealTimeProtection_txt.Content = $MPComputerstatus.RealTimeProtectionEnabled
         $lblOnAccessProtection_txt.Content = $MPComputerstatus.OnAccessProtectionEnabled
@@ -1013,7 +1055,7 @@ Function WindowLoader {
         $lblIoavProtection_txt.Content = $MPComputerstatus.IoavProtectionEnabled
         $lblTamper_txt.Content = $MPComputerstatus.IsTamperProtected
         $lblTamperSource_txt.Content = $MPComputerstatus.TamperProtectionSource
-        
+
         # Signature Information
         $lblAntivirusSigVersion_txt.Content = $MPComputerstatus.AntivirusSignatureVersion
         $lblAntivirusSigAge_txt.Content = "$($MPComputerstatus.AntivirusSignatureAge) days"
@@ -1021,7 +1063,7 @@ Function WindowLoader {
         $lblAntispywareSigVersion_txt.Content = $MPComputerstatus.AntispywareSignatureVersion
         $lblAntispywareSigAge_txt.Content = "$($MPComputerstatus.AntispywareSignatureAge) days"
         $lblSignatureVersion_txt.Content = $MPComputerstatus.NISSignatureVersion
-        
+
         # Scan Information
         $lblFullScanAge_txt.Content = if ($MPComputerstatus.FullScanAge -eq 4294967295) { "Never" } else { "$($MPComputerstatus.FullScanAge) days" }
         $lblFullScanStartTime_txt.Content = if ($MPComputerstatus.FullScanStartTime) { $MPComputerstatus.FullScanStartTime } else { "Never" }
@@ -1029,19 +1071,19 @@ Function WindowLoader {
         $lblQuickScanAge_txt.Content = if ($MPComputerstatus.QuickScanAge -eq 4294967295) { "Never" } else { "$($MPComputerstatus.QuickScanAge) days" }
         $lblQuickScanStartTime_txt.Content = if ($MPComputerstatus.QuickScanStartTime) { $MPComputerstatus.QuickScanStartTime } else { "Never" }
         $lblQuickScanEndTime_txt.Content = if ($MPComputerstatus.QuickScanEndTime) { $MPComputerstatus.QuickScanEndTime } else { "Never" }
-        
+
         # Additional Information
         $lblSignatureFallBackOrder_txt.Content = $MPpreference.SignatureFallbackOrder
         $lblSigUpdates_txt.Content = $MPComputerstatus.NISSignatureLastUpdated
         $scanSourceMap = @{ 0 = "Unknown"; 1 = "User"; 2 = "System"; 3 = "Real-time"; 4 = "IOAV" }
         $lblLastQuickScanSource_txt.Content = if ($scanSourceMap.ContainsKey([int]$MPComputerstatus.LastQuickScanSource)) { $scanSourceMap[[int]$MPComputerstatus.LastQuickScanSource] } else { $MPComputerstatus.LastQuickScanSource }
-        
+
         # Protection Settings (from Get-MpPreference)
         $lblQuarantine_text.Content = $MPpreference.QuarantinePurgeItemsAfterDelay
         $lblPUAProtect_text.Content = Convert-BoolValue -Value $MPpreference.DisableBlockAtFirstSeen
         $lblCloudTimeout_text.Content = $MPpreference.CloudExtendedTimeout
         $lblDeviceControl_Text.Content = $MPComputerstatus.DeviceControlState
-        
+
         # Header info
         $lblComputerName.Content = [System.Net.Dns]::GetHostName()
 
@@ -1070,14 +1112,14 @@ Function WindowLoader {
     catch { [System.Windows.MessageBox]::Show($Error[0], 'Confirm', 'OK', 'Error') }
 
     if (Test-Path "HKLM:\SOFTWARE\Microsoft\Windows Advanced Threat Protection\Status") {
-        $RegisteryOrgID = (Get-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows Advanced Threat Protection\Status" -Name "OrgId" -ErrorAction SilentlyContinue).OrgId 
+        $RegisteryOrgID = (Get-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows Advanced Threat Protection\Status" -Name "OrgId" -ErrorAction SilentlyContinue).OrgId
         $lblOrgID_txt.Content = $RegisteryOrgID
     }
-    
+
     # Load Firewall Profile Status
     try {
         $FWProfiles = Get-NetFirewallProfile -ErrorAction SilentlyContinue
-        
+
         foreach ($profile in $FWProfiles) {
             switch ($profile.Name) {
                 "Domain" {
@@ -1423,20 +1465,20 @@ Function Show-FirewallRulesWindow {
     param(
         [Parameter(Mandatory=$true)]$RulesData
     )
-    
+
     $fwXaml = @"
-<Window 
+<Window
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     Title="Windows Firewall Rules" Height="750" Width="1300" WindowStartupLocation="CenterScreen" Background="#F5F5F5" ResizeMode="CanResizeWithGrip" MinHeight="500" MinWidth="1300" MaxWidth="1300">
-    
+
     <Grid Margin="10">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
-        
+
         <!-- Header -->
         <Border Grid.Row="0" Background="#2D2D44" Padding="15,10" Margin="0,0,0,10" CornerRadius="5">
             <StackPanel>
@@ -1444,7 +1486,7 @@ Function Show-FirewallRulesWindow {
                 <TextBlock Name="txtRuleCount" Text="Loading..." FontSize="12" Foreground="#CCE5FF" FontFamily="Segoe UI"/>
             </StackPanel>
         </Border>
-        
+
         <!-- Filter Section -->
         <Border Grid.Row="1" Background="White" Padding="10" Margin="0,0,0,10" CornerRadius="5" BorderBrush="#CCC" BorderThickness="1">
             <StackPanel Orientation="Horizontal">
@@ -1481,9 +1523,9 @@ Function Show-FirewallRulesWindow {
                 </ComboBox>
             </StackPanel>
         </Border>
-        
+
         <!-- DataGrid -->
-        <DataGrid Grid.Row="2" Name="dgFirewallRules" AutoGenerateColumns="False" IsReadOnly="True" 
+        <DataGrid Grid.Row="2" Name="dgFirewallRules" AutoGenerateColumns="False" IsReadOnly="True"
                   CanUserSortColumns="True" CanUserReorderColumns="True" CanUserResizeColumns="True"
                   GridLinesVisibility="Horizontal" AlternatingRowBackground="#F9F9F9"
                   BorderBrush="#CCC" BorderThickness="1" FontFamily="Segoe UI">
@@ -1561,7 +1603,7 @@ Function Show-FirewallRulesWindow {
 
     $fwReader = (New-Object System.Xml.XmlNodeReader ([xml]$fwXaml))
     $fwWindow = [Windows.Markup.XamlReader]::Load($fwReader)
-    
+
     # Get controls
     $dgFirewallRules = $fwWindow.FindName("dgFirewallRules")
     $txtSearch = $fwWindow.FindName("txtSearch")
@@ -1570,14 +1612,14 @@ Function Show-FirewallRulesWindow {
     $cmbEnabled = $fwWindow.FindName("cmbEnabled")
     $cmbProfile = $fwWindow.FindName("cmbProfile")
     $txtRuleCount = $fwWindow.FindName("txtRuleCount")
-    
+
     # Store original data
     $script:OriginalFWData = $RulesData
-    
+
     # Set initial data
     $dgFirewallRules.ItemsSource = $RulesData
     $txtRuleCount.Text = "Showing $($RulesData.Count) firewall rules"
-    
+
     # Filter function
     $ApplyFWFilters = {
         $searchText = $txtSearch.Text.ToLower()
@@ -1585,48 +1627,48 @@ Function Show-FirewallRulesWindow {
         $actionFilter = $cmbAction.SelectedItem.Content
         $enabledFilter = $cmbEnabled.SelectedItem.Content
         $profileFilter = $cmbProfile.SelectedItem.Content
-        
+
         $filtered = $script:OriginalFWData | Where-Object {
             $matchesSearch = $true
             $matchesDirection = $true
             $matchesAction = $true
             $matchesEnabled = $true
             $matchesProfile = $true
-            
+
             if ($searchText) {
                 $matchesSearch = ($_.DisplayName -like "*$searchText*") -or ($_.Program -like "*$searchText*")
             }
-            
+
             if ($directionFilter -ne "All") {
                 $matchesDirection = $_.Direction -eq $directionFilter
             }
-            
+
             if ($actionFilter -ne "All") {
                 $matchesAction = $_.Action -eq $actionFilter
             }
-            
+
             if ($enabledFilter -ne "All") {
                 $matchesEnabled = $_.Enabled -eq $enabledFilter
             }
-            
+
             if ($profileFilter -ne "All") {
                 $matchesProfile = $_.Profile -like "*$profileFilter*"
             }
-            
+
             $matchesSearch -and $matchesDirection -and $matchesAction -and $matchesEnabled -and $matchesProfile
         }
-        
+
         $dgFirewallRules.ItemsSource = $filtered
         $txtRuleCount.Text = "Showing $($filtered.Count) of $($script:OriginalFWData.Count) firewall rules"
     }
-    
+
     # Event handlers
     $txtSearch.Add_TextChanged($ApplyFWFilters)
     $cmbDirection.Add_SelectionChanged($ApplyFWFilters)
     $cmbAction.Add_SelectionChanged($ApplyFWFilters)
     $cmbEnabled.Add_SelectionChanged($ApplyFWFilters)
     $cmbProfile.Add_SelectionChanged($ApplyFWFilters)
-    
+
     $fwWindow.ShowDialog() | Out-Null
 }
 
@@ -1799,20 +1841,20 @@ Function Show-ASRWindow {
     param(
         [Parameter(Mandatory=$true)]$ASRData
     )
-    
+
     $asrXaml = @"
-<Window 
+<Window
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     Title="ASR Rules Status" Height="600" Width="900" WindowStartupLocation="CenterScreen" Background="#F5F5F5" ResizeMode="CanResizeWithGrip" MinHeight="400" MinWidth="900" MaxWidth="900">
-    
+
     <Grid Margin="10">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
-        
+
         <!-- Header -->
         <Border Grid.Row="0" Background="#2D2D44" Padding="15,10" Margin="0,0,0,10" CornerRadius="5">
             <StackPanel>
@@ -1820,7 +1862,7 @@ Function Show-ASRWindow {
                 <TextBlock Name="txtASRCount" Text="Loading..." FontSize="12" Foreground="#CCE5FF" FontFamily="Segoe UI"/>
             </StackPanel>
         </Border>
-        
+
         <!-- Filter Section -->
         <Border Grid.Row="1" Background="White" Padding="10" Margin="0,0,0,10" CornerRadius="5" BorderBrush="#CCC" BorderThickness="1">
             <StackPanel Orientation="Horizontal">
@@ -1834,9 +1876,9 @@ Function Show-ASRWindow {
                 </ComboBox>
             </StackPanel>
         </Border>
-        
+
         <!-- DataGrid -->
-        <DataGrid Grid.Row="2" Name="dgASR" AutoGenerateColumns="False" IsReadOnly="True" 
+        <DataGrid Grid.Row="2" Name="dgASR" AutoGenerateColumns="False" IsReadOnly="True"
                   CanUserSortColumns="True" CanUserReorderColumns="True" CanUserResizeColumns="True"
                   GridLinesVisibility="Horizontal" AlternatingRowBackground="#F9F9F9"
                   BorderBrush="#CCC" BorderThickness="1" FontFamily="Segoe UI">
@@ -1865,23 +1907,23 @@ Function Show-ASRWindow {
 
     $asrReader = (New-Object System.Xml.XmlNodeReader ([xml]$asrXaml))
     $asrWindow = [Windows.Markup.XamlReader]::Load($asrReader)
-    
+
     # Get controls
     $dgASR = $asrWindow.FindName("dgASR")
     $cmbStatus = $asrWindow.FindName("cmbStatus")
     $txtASRCount = $asrWindow.FindName("txtASRCount")
-    
+
     # Store original data
     $script:OriginalASRData = $ASRData
-    
+
     # Set initial data
     $dgASR.ItemsSource = $ASRData
     $txtASRCount.Text = "Showing $($ASRData.Count) ASR rules"
-    
+
     # Filter by status
     $cmbStatus.Add_SelectionChanged({
         $statusFilter = $cmbStatus.SelectedItem.Content
-        
+
         if ($statusFilter -eq "All") {
             $dgASR.ItemsSource = $script:OriginalASRData
             $txtASRCount.Text = "Showing $($script:OriginalASRData.Count) ASR rules"
@@ -1891,7 +1933,7 @@ Function Show-ASRWindow {
             $txtASRCount.Text = "Showing $($filtered.Count) of $($script:OriginalASRData.Count) ASR rules"
         }
     })
-    
+
     $asrWindow.ShowDialog() | Out-Null
 }
 
@@ -1999,20 +2041,20 @@ Function Show-ExclusionsWindow {
     param(
         [Parameter(Mandatory=$true)]$ExclusionData
     )
-    
+
     $exclXaml = @"
-<Window 
+<Window
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     Title="Defender AV Exclusions" Height="600" Width="800" WindowStartupLocation="CenterScreen" Background="#F5F5F5" ResizeMode="CanResizeWithGrip" MinHeight="400" MinWidth="800" MaxWidth="800">
-    
+
     <Grid Margin="10">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
-        
+
         <!-- Header -->
         <Border Grid.Row="0" Background="#2D2D44" Padding="15,10" Margin="0,0,0,10" CornerRadius="5">
             <StackPanel>
@@ -2020,7 +2062,7 @@ Function Show-ExclusionsWindow {
                 <TextBlock Name="txtExclCount" Text="Loading..." FontSize="12" Foreground="#CCE5FF" FontFamily="Segoe UI"/>
             </StackPanel>
         </Border>
-        
+
         <!-- Filter Section -->
         <Border Grid.Row="1" Background="White" Padding="10" Margin="0,0,0,10" CornerRadius="5" BorderBrush="#CCC" BorderThickness="1">
             <StackPanel Orientation="Horizontal">
@@ -2037,9 +2079,9 @@ Function Show-ExclusionsWindow {
                 <TextBox Name="txtSearch" Width="200" Margin="5,0" Padding="5" FontFamily="Segoe UI" VerticalContentAlignment="Center"/>
             </StackPanel>
         </Border>
-        
+
         <!-- DataGrid -->
-        <DataGrid Grid.Row="2" Name="dgExclusions" AutoGenerateColumns="False" IsReadOnly="True" 
+        <DataGrid Grid.Row="2" Name="dgExclusions" AutoGenerateColumns="False" IsReadOnly="True"
                   CanUserSortColumns="True" CanUserReorderColumns="True" CanUserResizeColumns="True"
                   GridLinesVisibility="Horizontal" AlternatingRowBackground="#F9F9F9"
                   BorderBrush="#CCC" BorderThickness="1" FontFamily="Segoe UI">
@@ -2067,48 +2109,48 @@ Function Show-ExclusionsWindow {
 
     $exclReader = (New-Object System.Xml.XmlNodeReader ([xml]$exclXaml))
     $exclWindow = [Windows.Markup.XamlReader]::Load($exclReader)
-    
+
     # Get controls
     $dgExclusions = $exclWindow.FindName("dgExclusions")
     $cmbType = $exclWindow.FindName("cmbType")
     $txtSearch = $exclWindow.FindName("txtSearch")
     $txtExclCount = $exclWindow.FindName("txtExclCount")
-    
+
     # Store original data
     $script:OriginalExclData = $ExclusionData
-    
+
     # Set initial data
     $dgExclusions.ItemsSource = $ExclusionData
     $txtExclCount.Text = "Showing $($ExclusionData.Count) exclusions"
-    
+
     # Filter function
     $ApplyExclFilters = {
         $typeFilter = $cmbType.SelectedItem.Content
         $searchText = $txtSearch.Text.ToLower()
-        
+
         $filtered = $script:OriginalExclData | Where-Object {
             $matchesType = $true
             $matchesSearch = $true
-            
+
             if ($typeFilter -ne "All") {
                 $matchesType = $_.Type -eq $typeFilter
             }
-            
+
             if ($searchText) {
                 $matchesSearch = $_.Value -like "*$searchText*"
             }
-            
+
             $matchesType -and $matchesSearch
         }
-        
+
         $dgExclusions.ItemsSource = $filtered
         $txtExclCount.Text = "Showing $($filtered.Count) of $($script:OriginalExclData.Count) exclusions"
     }
-    
+
     $cmbType.Add_SelectionChanged($ApplyExclFilters)
-    
+
     $txtSearch.Add_TextChanged($ApplyExclFilters)
-    
+
     $exclWindow.ShowDialog() | Out-Null
 }
 
@@ -2118,13 +2160,13 @@ Function Show-LogWindow {
         [Parameter(Mandatory=$true)][string]$Title,
         [Parameter(Mandatory=$true)][string]$LogType
     )
-    
+
     $logXaml = @"
-<Window 
+<Window
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     Title="$Title" Height="750" Width="1200" WindowStartupLocation="CenterScreen" Background="#F5F5F5" ResizeMode="CanResizeWithGrip" MinHeight="500" MinWidth="1200" MaxWidth="1200">
-    
+
     <Grid Margin="10">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -2133,7 +2175,7 @@ Function Show-LogWindow {
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
-        
+
         <!-- Header -->
         <Border Grid.Row="0" Background="#2D2D44" Padding="15,10" Margin="0,0,0,10" CornerRadius="5">
             <StackPanel>
@@ -2141,7 +2183,7 @@ Function Show-LogWindow {
                 <TextBlock Name="txtLogCount" Text="Loading..." FontSize="12" Foreground="#CCE5FF" FontFamily="Segoe UI"/>
             </StackPanel>
         </Border>
-        
+
         <!-- Filter Section -->
         <Border Grid.Row="1" Background="White" Padding="10" Margin="0,0,0,10" CornerRadius="5" BorderBrush="#CCC" BorderThickness="1">
             <StackPanel Orientation="Horizontal">
@@ -2159,9 +2201,9 @@ Function Show-LogWindow {
                 </ComboBox>
             </StackPanel>
         </Border>
-        
+
         <!-- DataGrid -->
-        <DataGrid Grid.Row="2" Name="dgLogs" AutoGenerateColumns="False" IsReadOnly="True" 
+        <DataGrid Grid.Row="2" Name="dgLogs" AutoGenerateColumns="False" IsReadOnly="True"
                   CanUserSortColumns="True" CanUserReorderColumns="True" CanUserResizeColumns="True"
                   GridLinesVisibility="Horizontal" AlternatingRowBackground="#F9F9F9"
                   BorderBrush="#CCC" BorderThickness="1" FontFamily="Segoe UI">
@@ -2198,10 +2240,10 @@ Function Show-LogWindow {
                 </DataGridTextColumn>
             </DataGrid.Columns>
         </DataGrid>
-        
+
         <!-- Details Section -->
         <GridSplitter Grid.Row="3" Height="5" HorizontalAlignment="Stretch" Background="#E0E0E0" Margin="0,5"/>
-        
+
         <Border Grid.Row="4" Background="White" Padding="10" CornerRadius="5" BorderBrush="#CCC" BorderThickness="1" Height="150">
             <Grid>
                 <Grid.RowDefinitions>
@@ -2209,7 +2251,7 @@ Function Show-LogWindow {
                     <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
                 <Label Grid.Row="0" Content="Message Details:" FontWeight="Bold" FontFamily="Segoe UI"/>
-                <TextBox Grid.Row="1" Name="txtDetails" IsReadOnly="True" TextWrapping="Wrap" 
+                <TextBox Grid.Row="1" Name="txtDetails" IsReadOnly="True" TextWrapping="Wrap"
                          VerticalScrollBarVisibility="Auto" BorderBrush="#CCC" Padding="5" FontFamily="Segoe UI"/>
             </Grid>
         </Border>
@@ -2219,7 +2261,7 @@ Function Show-LogWindow {
 
     $logReader = (New-Object System.Xml.XmlNodeReader ([xml]$logXaml))
     $logWindow = [Windows.Markup.XamlReader]::Load($logReader)
-    
+
     # Get controls
     $dgLogs = $logWindow.FindName("dgLogs")
     $txtFilter = $logWindow.FindName("txtFilter")
@@ -2228,58 +2270,58 @@ Function Show-LogWindow {
     $cmbLevel = $logWindow.FindName("cmbLevel")
     $txtDetails = $logWindow.FindName("txtDetails")
     $txtLogCount = $logWindow.FindName("txtLogCount")
-    
+
     # Store original data
     $script:OriginalLogData = $LogData
     $script:FilteredLogData = $LogData
-    
+
     # Set initial data
     $dgLogs.ItemsSource = $LogData
     $txtLogCount.Text = "Showing $($LogData.Count) log entries"
-    
+
     # Filter function
     $ApplyFilters = {
         $filterText = $txtFilter.Text.ToLower()
         $levelFilter = $cmbLevel.SelectedItem.Content
-        
+
         $script:FilteredLogData = $script:OriginalLogData | Where-Object {
             $matchesText = $true
             $matchesLevel = $true
-            
+
             if ($filterText) {
                 $matchesText = ($_.Message -like "*$filterText*") -or ($_.Id -like "*$filterText*")
             }
-            
+
             if ($levelFilter -ne "All") {
                 $matchesLevel = $_.LevelDisplayName -eq $levelFilter
             }
-            
+
             $matchesText -and $matchesLevel
         }
-        
+
         $dgLogs.ItemsSource = $script:FilteredLogData
         $txtLogCount.Text = "Showing $($script:FilteredLogData.Count) of $($script:OriginalLogData.Count) log entries"
     }
-    
+
     # Event handlers
     $btnApplyFilter.Add_Click($ApplyFilters)
-    
+
     $btnClearFilter.Add_Click({
         $txtFilter.Text = ""
         $cmbLevel.SelectedIndex = 0
         $dgLogs.ItemsSource = $script:OriginalLogData
         $txtLogCount.Text = "Showing $($script:OriginalLogData.Count) log entries"
     })
-    
+
     $cmbLevel.Add_SelectionChanged($ApplyFilters)
-    
+
     $txtFilter.Add_KeyDown({
         param($sender, $e)
         if ($e.Key -eq "Return") {
             $ApplyFilters.Invoke()
         }
     })
-    
+
     # Show details when row is selected
     $dgLogs.Add_SelectionChanged({
         if ($dgLogs.SelectedItem) {
@@ -2287,20 +2329,20 @@ Function Show-LogWindow {
             $txtDetails.Text = "Time: $($selectedLog.TimeCreated)`r`nEvent ID: $($selectedLog.Id)`r`nLevel: $($selectedLog.LevelDisplayName)`r`n`r`nMessage:`r`n$($selectedLog.Message)"
         }
     })
-    
+
     $logWindow.ShowDialog() | Out-Null
 }
 
 # ==================== EVENT HANDLERS ====================
 
-$MainWindow1.Add_Loaded({ 
+$MainWindow1.Add_Loaded({
     try {
         WindowLoader
     }
     catch { [System.Windows.MessageBox]::Show($Error[0], 'Confirm', 'OK', 'Error') }
 })
 
-$btnDownloadClientAnalyzer.Add_Click({ 
+$btnDownloadClientAnalyzer.Add_Click({
     try {
         $folder = (New-Object -ComObject Shell.Application).BrowseForFolder(0, "Select Destination Folder", 0).Self.Path
         if ($folder) {
@@ -2329,14 +2371,14 @@ $btnUpdateIntel.Add_Click({
 $btnShowSenseLogs.Add_Click({
     try {
         $MainWindow1.Cursor = [System.Windows.Input.Cursors]::Wait
-        $SenseLogs = Get-WinEvent -LogName "Microsoft-Windows-SENSE/Operational" -ErrorAction Stop | 
+        $SenseLogs = Get-WinEvent -LogName "Microsoft-Windows-SENSE/Operational" -ErrorAction Stop |
             Select-Object TimeCreated, Id, LevelDisplayName, Message
         $MainWindow1.Cursor = [System.Windows.Input.Cursors]::Arrow
         Show-LogWindow -LogData $SenseLogs -Title "SENSE Logs" -LogType "SENSE"
     }
-    catch { 
+    catch {
         $MainWindow1.Cursor = [System.Windows.Input.Cursors]::Arrow
-        [System.Windows.MessageBox]::Show($Error[0], 'Error', 'OK', 'Error') 
+        [System.Windows.MessageBox]::Show($Error[0], 'Error', 'OK', 'Error')
     }
 })
 
@@ -2432,14 +2474,14 @@ $btnCheckForLastestUpdate.Add_Click({
 $btnShowDefenderAVLogs.Add_Click({
     try {
         $MainWindow1.Cursor = [System.Windows.Input.Cursors]::Wait
-        $DefenderLogs = Get-WinEvent -LogName "Microsoft-Windows-Windows Defender/Operational" -MaxEvents 50 -ErrorAction Stop | 
+        $DefenderLogs = Get-WinEvent -LogName "Microsoft-Windows-Windows Defender/Operational" -MaxEvents 50 -ErrorAction Stop |
             Select-Object TimeCreated, Id, LevelDisplayName, Message
         $MainWindow1.Cursor = [System.Windows.Input.Cursors]::Arrow
         Show-LogWindow -LogData $DefenderLogs -Title "Defender AV Logs" -LogType "Defender"
     }
-    catch { 
+    catch {
         $MainWindow1.Cursor = [System.Windows.Input.Cursors]::Arrow
-        [System.Windows.MessageBox]::Show($Error[0], 'Error', 'OK', 'Error') 
+        [System.Windows.MessageBox]::Show($Error[0], 'Error', 'OK', 'Error')
     }
 })
 
@@ -2665,46 +2707,46 @@ $btnExclusions.Add_Click({
     try {
         $MPpreference = Get-MpPreference
         $ExclusionList = @()
-        
+
         # Add Path exclusions
         if ($MPpreference.ExclusionPath) {
             foreach ($path in $MPpreference.ExclusionPath) {
                 $ExclusionList += [PSCustomObject]@{ Type = "Path"; Value = $path }
             }
         }
-        
+
         # Add Extension exclusions
         if ($MPpreference.ExclusionExtension) {
             foreach ($ext in $MPpreference.ExclusionExtension) {
                 $ExclusionList += [PSCustomObject]@{ Type = "Extension"; Value = $ext }
             }
         }
-        
+
         # Add Process exclusions
         if ($MPpreference.ExclusionProcess) {
             foreach ($proc in $MPpreference.ExclusionProcess) {
                 $ExclusionList += [PSCustomObject]@{ Type = "Process"; Value = $proc }
             }
         }
-        
+
         # Add IP Address exclusions
         if ($MPpreference.ExclusionIpAddress) {
             foreach ($ip in $MPpreference.ExclusionIpAddress) {
                 $ExclusionList += [PSCustomObject]@{ Type = "IP Address"; Value = $ip }
             }
         }
-        
+
         $MainWindow1.Cursor = [System.Windows.Input.Cursors]::Arrow
-        
+
         if ($ExclusionList.Count -gt 0) {
             Show-ExclusionsWindow -ExclusionData $ExclusionList
         } else {
             [System.Windows.MessageBox]::Show("No Defender AV exclusions found!", 'Exclusions', 'OK', 'Information')
         }
     }
-    catch { 
+    catch {
         $MainWindow1.Cursor = [System.Windows.Input.Cursors]::Arrow
-        [System.Windows.MessageBox]::Show($Error[0], 'Error', 'OK', 'Error') 
+        [System.Windows.MessageBox]::Show($Error[0], 'Error', 'OK', 'Error')
     }
 })
 
@@ -2795,27 +2837,27 @@ $btnShowFirewallRules.Add_Click({
     try {
         # Get all rules first
         $Rules = Get-NetFirewallRule -ErrorAction Stop
-        
+
         # Get all port filters and application filters in bulk
         $PortFilters = Get-NetFirewallPortFilter -All -ErrorAction SilentlyContinue
         $AppFilters = Get-NetFirewallApplicationFilter -All -ErrorAction SilentlyContinue
-        
+
         # Create hashtables for fast lookup
         $PortFilterHash = @{}
         foreach ($pf in $PortFilters) {
             $PortFilterHash[$pf.InstanceID] = $pf
         }
-        
+
         $AppFilterHash = @{}
         foreach ($af in $AppFilters) {
             $AppFilterHash[$af.InstanceID] = $af
         }
-        
+
         # Build the results
         $FirewallRules = foreach ($rule in $Rules) {
             $portFilter = $PortFilterHash[$rule.InstanceID]
             $appFilter = $AppFilterHash[$rule.InstanceID]
-            
+
             [PSCustomObject]@{
                 DisplayName = $rule.DisplayName
                 Enabled     = $rule.Enabled
@@ -2828,18 +2870,18 @@ $btnShowFirewallRules.Add_Click({
                 Program     = if ($appFilter -and $appFilter.Program) { $appFilter.Program } else { "Any" }
             }
         }
-        
+
         $MainWindow1.Cursor = [System.Windows.Input.Cursors]::Arrow
-        
+
         if ($FirewallRules) {
             Show-FirewallRulesWindow -RulesData $FirewallRules
         } else {
             [System.Windows.MessageBox]::Show("No firewall rules found.", 'Firewall Rules', 'OK', 'Information')
         }
     }
-    catch { 
+    catch {
         $MainWindow1.Cursor = [System.Windows.Input.Cursors]::Arrow
-        [System.Windows.MessageBox]::Show($Error[0], 'Error', 'OK', 'Error') 
+        [System.Windows.MessageBox]::Show($Error[0], 'Error', 'OK', 'Error')
     }
 })
 
